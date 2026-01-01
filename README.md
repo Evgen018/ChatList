@@ -13,10 +13,29 @@ pip install -r requirements.txt
 
 ## Запуск
 
-Запустите программу командой:
+### Вариант 1: Запуск из исходного кода
 
 ```powershell
 python main.py
+```
+
+### Вариант 2: Создание исполняемого файла .exe
+
+1. Установите PyInstaller (если ещё не установлен):
+```powershell
+pip install pyinstaller
+```
+
+2. Запустите скрипт сборки:
+```powershell
+.\build.ps1
+```
+
+3. Исполняемый файл будет создан в папке `dist\ChatListApp.exe`
+
+4. Запустите приложение:
+```powershell
+.\dist\ChatListApp.exe
 ```
 
 ## Описание

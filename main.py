@@ -26,11 +26,8 @@ class MainWindow(QMainWindow):
         self.button.clicked.connect(self.on_button_click)
         layout.addWidget(self.button)
         
-        self.click_count = 0
-    
     def on_button_click(self):
-        self.click_count += 1
-        self.label.setText(f"Кнопка нажата {self.click_count} раз!")
+        self.label.setText("Минимальная программа на Python")
 
 
 def main():

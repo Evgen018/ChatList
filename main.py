@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("PyQt5 Приложение")
-        self.setMinimumSize(400, 300)
+        self.setMinimumSize(600, 400)
 
         # Центральный виджет
         central_widget = QWidget()
@@ -42,12 +42,9 @@ class MainWindow(QMainWindow):
         self.button.clicked.connect(self.on_button_click)
         layout.addWidget(self.button)
 
-        self.click_count = 0
-
     def on_button_click(self):
         """Обработчик нажатия кнопки."""
-        self.click_count += 1
-        self.label.setText(f"Нажатий: {self.click_count}")
+        self.label.setText("Минимальная программа на Python")
 
 
 def main():

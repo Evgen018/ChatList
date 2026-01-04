@@ -25,13 +25,98 @@ from PyQt5.QtWidgets import (
     QFrame,
     QSpinBox,
     QFileDialog,
+    QDialog,
+    QTextBrowser,
 )
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QFont
 
+
+class MarkdownViewerDialog(QDialog):
+    """Диалог для просмотра ответа в формате Markdown."""
+
+    def __init__(self, title: str, content: str, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle(f"Ответ: {title}")
+        self.setMinimumSize(800, 600)
+        self.setup_ui(content)
+
+    def setup_ui(self, content: str):
+        layout = QVBoxLayout(self)
+
+        # Текстовый браузер с поддержкой Markdown
+        self.text_browser = QTextBrowser()
+        self.text_browser.setOpenExternalLinks(True)
+        self.text_browser.setMarkdown(content)
+        self.text_browser.setStyleSheet("""
+            QTextBrowser {
+                background-color: #ffffff;
+                border: 1px solid #dee2e6;
+                border-radius: 5px;
+                padding: 15px;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        """)
+        layout.addWidget(self.text_browser)
+
+        # Кнопки
+        buttons_layout = QHBoxLayout()
+
+        copy_btn = QPushButton("📋 Копировать")
+        copy_btn.clicked.connect(lambda: self.copy_to_clipboard(content))
+        copy_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #3498db;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: #2980b9;
+            }
+        """)
+        buttons_layout.addWidget(copy_btn)
+
+        buttons_layout.addStretch()
+
+        close_btn = QPushButton("Закрыть")
+        close_btn.clicked.connect(self.close)
+        close_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #95a5a6;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: #7f8c8d;
+            }
+        """)
+        buttons_layout.addWidget(close_btn)
+
+        layout.addLayout(buttons_layout)
+
+    def copy_to_clipboard(self, content: str):
+        """Копировать содержимое в буфер обмена."""
+        clipboard = QApplication.clipboard()
+        clipboard.setText(content)
+        QMessageBox.information(self, "Готово", "Текст скопирован в буфер обмена")
+
 from db import Database
 from models import ModelManager, ResultsStore
 from network import send_to_models_sync
+from logger import (
+    log_request,
+    log_response,
+    log_save_results,
+    log_export,
+    log_error,
+    log_app_start,
+    log_app_close,
+)
 
 
 class RequestWorker(QThread):
@@ -276,14 +361,19 @@ class ResultsTab(QWidget):
 
         # Таблица результатов
         self.results_table = QTableWidget()
-        self.results_table.setColumnCount(4)
-        self.results_table.setHorizontalHeaderLabels(["", "Модель", "Ответ", "Токены"])
+        self.results_table.setColumnCount(5)
+        self.results_table.setHorizontalHeaderLabels(["", "Модель", "Ответ", "Токены", ""])
         self.results_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Fixed)
         self.results_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
         self.results_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
         self.results_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeToContents)
+        self.results_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.Fixed)
         self.results_table.setColumnWidth(0, 30)
+        self.results_table.setColumnWidth(4, 80)
         self.results_table.setAlternatingRowColors(True)
+        self.results_table.setSortingEnabled(True)
+        self.results_table.setWordWrap(True)  # Перенос текста
+        self.results_table.verticalHeader().setDefaultSectionSize(120)  # Высота строк
         self.results_table.setStyleSheet("""
             QTableWidget {
                 border: 1px solid #dee2e6;
@@ -363,17 +453,43 @@ class ResultsTab(QWidget):
                 model_item.setForeground(Qt.red)
             self.results_table.setItem(row, 1, model_item)
 
-            # Ответ
-            response_text = result.response[:500] + "..." if len(result.response) > 500 else result.response
+            # Ответ (показываем больше текста)
+            response_text = result.response[:1000] + "..." if len(result.response) > 1000 else result.response
             response_item = QTableWidgetItem(response_text)
             response_item.setToolTip(result.response)
+            response_item.setTextAlignment(Qt.AlignTop | Qt.AlignLeft)
             self.results_table.setItem(row, 2, response_item)
 
             # Токены
             tokens_item = QTableWidgetItem(str(result.tokens))
             self.results_table.setItem(row, 3, tokens_item)
 
+            # Кнопка "Открыть"
+            open_btn = QPushButton("📖 Открыть")
+            open_btn.clicked.connect(
+                lambda _, name=result.model_name, resp=result.response: self.open_response(name, resp)
+            )
+            open_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #9b59b6;
+                    color: white;
+                    border: none;
+                    padding: 5px 10px;
+                    border-radius: 3px;
+                    font-size: 12px;
+                }
+                QPushButton:hover {
+                    background-color: #8e44ad;
+                }
+            """)
+            self.results_table.setCellWidget(row, 4, open_btn)
+
         self.results_table.resizeRowsToContents()
+
+    def open_response(self, model_name: str, response: str):
+        """Открыть ответ в отдельном окне с форматированием Markdown."""
+        dialog = MarkdownViewerDialog(model_name, response, self)
+        dialog.exec_()
 
     def toggle_selection(self, index: int):
         """Переключить выбор результата."""
@@ -408,6 +524,7 @@ class ResultsTab(QWidget):
         ]
 
         self.db.save_results(results_to_save)
+        log_save_results(len(results_to_save))
         QMessageBox.information(
             self, "Успех", f"Сохранено {len(results_to_save)} результатов"
         )
@@ -452,6 +569,7 @@ class ModelsTab(QWidget):
         self.models_table.setColumnWidth(0, 60)
         self.models_table.setColumnWidth(6, 80)
         self.models_table.setAlternatingRowColors(True)
+        self.models_table.setSortingEnabled(True)
         layout.addWidget(self.models_table)
 
         # Форма добавления
@@ -475,7 +593,7 @@ class ModelsTab(QWidget):
         row1.addWidget(self.name_edit)
 
         self.provider_combo = QComboBox()
-        self.provider_combo.addItems(["openai", "anthropic", "google"])
+        self.provider_combo.addItems(["openai", "anthropic", "google", "openrouter"])
         row1.addWidget(self.provider_combo)
         form_layout.addLayout(row1)
 
@@ -668,6 +786,7 @@ class HistoryTab(QWidget):
         self.history_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.Fixed)
         self.history_table.setColumnWidth(4, 80)
         self.history_table.setAlternatingRowColors(True)
+        self.history_table.setSortingEnabled(True)
         layout.addWidget(self.history_table)
 
         # Кнопки экспорта
@@ -756,6 +875,7 @@ class HistoryTab(QWidget):
                 f.write(f"**Промт:** {r['prompt_text']}\n\n")
                 f.write(f"**Ответ:**\n\n{r['response']}\n\n---\n\n")
 
+        log_export(file_path, "Markdown")
         QMessageBox.information(self, "Успех", f"Экспортировано в {file_path}")
 
     def export_json(self):
@@ -778,6 +898,7 @@ class HistoryTab(QWidget):
         with open(file_path, "w", encoding="utf-8") as f:
             json.dump(results, f, ensure_ascii=False, indent=2)
 
+        log_export(file_path, "JSON")
         QMessageBox.information(self, "Успех", f"Экспортировано в {file_path}")
 
 
@@ -929,6 +1050,9 @@ class MainWindow(QMainWindow):
 
     def send_requests(self, prompt: str, models: list):
         """Отправить запросы во все модели."""
+        # Логирование
+        log_request(prompt, models)
+
         # Показать прогресс
         self.request_tab.progress.setVisible(True)
         self.request_tab.progress.setRange(0, 0)  # Indeterminate
@@ -950,6 +1074,15 @@ class MainWindow(QMainWindow):
         self.request_tab.send_btn.setEnabled(True)
         self.request_tab.status_label.setText(f"Получено {len(results)} ответов")
 
+        # Логирование результатов
+        for r in results:
+            log_response(
+                r.get("model_name", "Unknown"),
+                r.get("success", False),
+                r.get("tokens", 0),
+                r.get("error"),
+            )
+
         # Сохранить результаты
         self.results_store.set_results(self.worker.prompt, results)
         self.results_tab.update_results()
@@ -959,6 +1092,7 @@ class MainWindow(QMainWindow):
 
     def on_requests_error(self, error: str):
         """Обработка ошибки запросов."""
+        log_error("Ошибка при отправке запросов", Exception(error))
         self.request_tab.progress.setVisible(False)
         self.request_tab.send_btn.setEnabled(True)
         self.request_tab.status_label.setText(f"Ошибка: {error}")
@@ -966,12 +1100,15 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         """Обработка закрытия окна."""
+        log_app_close()
         self.db.close()
         event.accept()
 
 
 def main():
     """Точка входа."""
+    log_app_start()
+
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
 

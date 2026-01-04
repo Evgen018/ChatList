@@ -64,6 +64,9 @@ db.sqlite3-journal
 # ChatList database
 chatlist.db
 
+# ChatList logs
+logs/
+
 # Flask stuff:
 instance/
 .webassets-cache

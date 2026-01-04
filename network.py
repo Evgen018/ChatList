@@ -87,6 +87,7 @@ class OpenAIClient(BaseAPIClient):
         data = {
             "model": self.model_id,
             "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": 4096,
         }
 
         try:
@@ -96,7 +97,20 @@ class OpenAIClient(BaseAPIClient):
                     headers=headers,
                     json=data,
                 )
-                response.raise_for_status()
+                
+                # Обработка ошибок с детальным сообщением
+                if response.status_code != 200:
+                    try:
+                        error_data = response.json()
+                        error_msg = error_data.get("error", {}).get("message", str(error_data))
+                    except Exception:
+                        error_msg = response.text[:200]
+                    return APIResponse(
+                        success=False,
+                        content="",
+                        error=f"HTTP {response.status_code}: {error_msg}",
+                    )
+                
                 result = response.json()
 
                 content = result["choices"][0]["message"]["content"]
@@ -115,10 +129,15 @@ class OpenAIClient(BaseAPIClient):
                 error="Превышено время ожидания ответа",
             )
         except httpx.HTTPStatusError as e:
+            try:
+                error_data = e.response.json()
+                error_msg = error_data.get("error", {}).get("message", str(error_data))
+            except Exception:
+                error_msg = e.response.text[:200]
             return APIResponse(
                 success=False,
                 content="",
-                error=f"HTTP ошибка: {e.response.status_code}",
+                error=f"HTTP {e.response.status_code}: {error_msg}",
             )
         except Exception as e:
             return APIResponse(
@@ -254,12 +273,94 @@ class GoogleClient(BaseAPIClient):
             )
 
 
+class OpenRouterClient(BaseAPIClient):
+    """Клиент для OpenRouter API (https://openrouter.ai/)."""
+
+    async def send_message(self, prompt: str) -> APIResponse:
+        """Отправить сообщение в OpenRouter API."""
+        if not self.is_configured():
+            return APIResponse(
+                success=False,
+                content="",
+                error="API-ключ не настроен",
+            )
+
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://github.com/chatlist",
+            "X-Title": "ChatList",
+        }
+
+        data = {
+            "model": self.model_id,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": 4096,
+        }
+
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.post(
+                    f"{self.api_url}/chat/completions",
+                    headers=headers,
+                    json=data,
+                )
+                
+                # Обработка ошибок с детальным сообщением
+                if response.status_code != 200:
+                    try:
+                        error_data = response.json()
+                        error_msg = error_data.get("error", {}).get("message", str(error_data))
+                    except Exception:
+                        error_msg = response.text[:200]
+                    return APIResponse(
+                        success=False,
+                        content="",
+                        error=f"HTTP {response.status_code}: {error_msg}",
+                    )
+                
+                result = response.json()
+
+                content = result["choices"][0]["message"]["content"]
+                tokens = result.get("usage", {}).get("total_tokens", 0)
+
+                return APIResponse(
+                    success=True,
+                    content=content,
+                    tokens=tokens,
+                )
+
+        except httpx.TimeoutException:
+            return APIResponse(
+                success=False,
+                content="",
+                error="Превышено время ожидания ответа",
+            )
+        except httpx.HTTPStatusError as e:
+            try:
+                error_data = e.response.json()
+                error_msg = error_data.get("error", {}).get("message", str(error_data))
+            except Exception:
+                error_msg = e.response.text[:200]
+            return APIResponse(
+                success=False,
+                content="",
+                error=f"HTTP {e.response.status_code}: {error_msg}",
+            )
+        except Exception as e:
+            return APIResponse(
+                success=False,
+                content="",
+                error=str(e),
+            )
+
+
 def get_client(provider: str, api_url: str, api_key_env: str, model_id: str) -> BaseAPIClient:
     """
     Получить клиент API для указанного провайдера.
 
     Args:
-        provider: Провайдер (openai, anthropic, google).
+        provider: Провайдер (openai, anthropic, google, openrouter).
         api_url: URL эндпоинта API.
         api_key_env: Имя переменной окружения с API-ключом.
         model_id: Идентификатор модели.
@@ -271,6 +372,7 @@ def get_client(provider: str, api_url: str, api_key_env: str, model_id: str) -> 
         "openai": OpenAIClient,
         "anthropic": AnthropicClient,
         "google": GoogleClient,
+        "openrouter": OpenRouterClient,
     }
 
     client_class = clients.get(provider, OpenAIClient)

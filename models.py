@@ -39,7 +39,7 @@ class ResultsStore:
 
     @property
     def current_prompt(self) -> str:
-        """Получить текущий промт."""
+        """Получить текущий промпт."""
         return self._current_prompt
 
     def set_results(self, prompt: str, results: list[dict]) -> None:
@@ -47,7 +47,7 @@ class ResultsStore:
         Установить новые результаты.
 
         Args:
-            prompt: Текст промта.
+            prompt: Текст промпта.
             results: Список результатов от API.
         """
         self.clear()

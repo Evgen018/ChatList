@@ -154,14 +154,61 @@ class RequestTab(QWidget):
         layout = QVBoxLayout(self)
         layout.setSpacing(15)
 
-        # Заголовок
-        title = QLabel("Введите промт")
+        # Заголовок и CRUD кнопки
+        header_layout = QHBoxLayout()
+        title = QLabel("Введите промпт")
         title.setStyleSheet("font-size: 18px; font-weight: bold; color: #2c3e50;")
-        layout.addWidget(title)
+        header_layout.addWidget(title)
+        header_layout.addStretch()
 
-        # Выбор сохранённого промта
+        # CRUD кнопки для промптов
+        self.view_prompt_btn = QPushButton("📖 Просмотр")
+        self.view_prompt_btn.clicked.connect(self.view_prompt)
+        self.view_prompt_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #9b59b6;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+            }
+            QPushButton:hover { background-color: #8e44ad; }
+        """)
+        header_layout.addWidget(self.view_prompt_btn)
+
+        self.edit_prompt_btn = QPushButton("✏️ Изменить")
+        self.edit_prompt_btn.clicked.connect(self.edit_prompt)
+        self.edit_prompt_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #3498db;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+            }
+            QPushButton:hover { background-color: #2980b9; }
+        """)
+        header_layout.addWidget(self.edit_prompt_btn)
+
+        self.delete_prompt_btn = QPushButton("🗑️ Удалить")
+        self.delete_prompt_btn.clicked.connect(self.delete_prompt)
+        self.delete_prompt_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #e74c3c;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+            }
+            QPushButton:hover { background-color: #c0392b; }
+        """)
+        header_layout.addWidget(self.delete_prompt_btn)
+
+        layout.addLayout(header_layout)
+
+        # Выбор сохранённого промпта
         saved_layout = QHBoxLayout()
-        saved_label = QLabel("Сохранённые промты:")
+        saved_label = QLabel("Сохранённые промпты:")
         self.prompts_combo = QComboBox()
         self.prompts_combo.setMinimumWidth(300)
         self.prompts_combo.currentIndexChanged.connect(self.on_prompt_selected)
@@ -173,7 +220,7 @@ class RequestTab(QWidget):
         saved_layout.addWidget(self.refresh_prompts_btn)
         layout.addLayout(saved_layout)
 
-        # Текстовое поле для промта
+        # Текстовое поле для промпта
         self.prompt_edit = QTextEdit()
         self.prompt_edit.setPlaceholderText("Введите ваш запрос здесь...")
         self.prompt_edit.setMinimumHeight(150)
@@ -202,7 +249,7 @@ class RequestTab(QWidget):
         # Кнопки
         buttons_layout = QHBoxLayout()
 
-        self.save_prompt_btn = QPushButton("💾 Сохранить промт")
+        self.save_prompt_btn = QPushButton("💾 Сохранить промпт")
         self.save_prompt_btn.clicked.connect(self.save_prompt)
         self.save_prompt_btn.setStyleSheet("""
             QPushButton {
@@ -268,20 +315,20 @@ class RequestTab(QWidget):
 
         layout.addStretch()
 
-        # Загрузка сохранённых промтов
+        # Загрузка сохранённых промптов
         self.load_saved_prompts()
 
     def load_saved_prompts(self):
-        """Загрузить список сохранённых промтов."""
+        """Загрузить список сохранённых промптов."""
         self.prompts_combo.clear()
-        self.prompts_combo.addItem("— Выберите промт —", None)
+        self.prompts_combo.addItem("— Выберите промпт —", None)
         prompts = self.db.get_prompts(limit=50)
         for prompt in prompts:
             text = prompt["text"][:50] + "..." if len(prompt["text"]) > 50 else prompt["text"]
             self.prompts_combo.addItem(text, prompt["id"])
 
     def on_prompt_selected(self, index):
-        """Обработка выбора промта из списка."""
+        """Обработка выбора промпта из списка."""
         prompt_id = self.prompts_combo.currentData()
         if prompt_id:
             prompt = self.db.get_prompt_by_id(prompt_id)
@@ -290,22 +337,64 @@ class RequestTab(QWidget):
                 self.tags_edit.setText(prompt["tags"])
 
     def save_prompt(self):
-        """Сохранить промт в базу данных."""
+        """Сохранить промпт в базу данных."""
         text = self.prompt_edit.toPlainText().strip()
         if not text:
-            QMessageBox.warning(self, "Ошибка", "Введите текст промта")
+            QMessageBox.warning(self, "Ошибка", "Введите текст промпта")
             return
 
         tags = self.tags_edit.text().strip()
         self.db.add_prompt(text, tags)
         self.load_saved_prompts()
-        self.status_label.setText("Промт сохранён")
+        self.status_label.setText("Промпт сохранён")
+
+    def view_prompt(self):
+        """Просмотр выбранного промпта."""
+        prompt_id = self.prompts_combo.currentData()
+        if not prompt_id:
+            QMessageBox.warning(self, "Ошибка", "Выберите промпт")
+            return
+        prompt = self.db.get_prompt_by_id(prompt_id)
+        if prompt:
+            dialog = MarkdownViewerDialog("Промпт", prompt["text"], self)
+            dialog.exec_()
+
+    def edit_prompt(self):
+        """Редактировать выбранный промпт."""
+        prompt_id = self.prompts_combo.currentData()
+        if not prompt_id:
+            QMessageBox.warning(self, "Ошибка", "Выберите промпт")
+            return
+        prompt = self.db.get_prompt_by_id(prompt_id)
+        if prompt:
+            # Загрузить в редактор
+            self.prompt_edit.setText(prompt["text"])
+            self.tags_edit.setText(prompt["tags"])
+            # Удалить старый и сохранить как новый при нажатии "Сохранить"
+            self.status_label.setText("Редактирование промпта. Измените и нажмите 'Сохранить'")
+
+    def delete_prompt(self):
+        """Удалить выбранный промпт."""
+        prompt_id = self.prompts_combo.currentData()
+        if not prompt_id:
+            QMessageBox.warning(self, "Ошибка", "Выберите промпт")
+            return
+        reply = QMessageBox.question(
+            self, "Подтверждение", "Удалить выбранный промпт?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+        if reply == QMessageBox.Yes:
+            self.db.delete_prompt(prompt_id)
+            self.load_saved_prompts()
+            self.prompt_edit.clear()
+            self.tags_edit.clear()
+            self.status_label.setText("Промпт удалён")
 
     def send_request(self):
         """Отправить запрос во все активные модели."""
         prompt = self.prompt_edit.toPlainText().strip()
         if not prompt:
-            QMessageBox.warning(self, "Ошибка", "Введите текст промта")
+            QMessageBox.warning(self, "Ошибка", "Введите текст промпта")
             return
 
         models = self.model_manager.get_active_models()
@@ -331,24 +420,58 @@ class ResultsTab(QWidget):
         layout = QVBoxLayout(self)
         layout.setSpacing(10)
 
-        # Заголовок
+        # Заголовок и CRUD кнопки
         header_layout = QHBoxLayout()
         title = QLabel("Результаты запроса")
         title.setStyleSheet("font-size: 18px; font-weight: bold; color: #2c3e50;")
         header_layout.addWidget(title)
         header_layout.addStretch()
 
-        self.select_all_btn = QPushButton("☑ Выбрать все")
-        self.select_all_btn.clicked.connect(self.select_all)
-        header_layout.addWidget(self.select_all_btn)
+        # CRUD кнопки
+        self.view_result_btn = QPushButton("📖 Просмотр")
+        self.view_result_btn.clicked.connect(self.view_selected_result)
+        self.view_result_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #9b59b6;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+            }
+            QPushButton:hover { background-color: #8e44ad; }
+        """)
+        header_layout.addWidget(self.view_result_btn)
 
-        self.deselect_all_btn = QPushButton("☐ Снять все")
-        self.deselect_all_btn.clicked.connect(self.deselect_all)
-        header_layout.addWidget(self.deselect_all_btn)
+        self.delete_result_btn = QPushButton("🗑️ Удалить")
+        self.delete_result_btn.clicked.connect(self.delete_selected_result)
+        self.delete_result_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #e74c3c;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+            }
+            QPushButton:hover { background-color: #c0392b; }
+        """)
+        header_layout.addWidget(self.delete_result_btn)
 
         layout.addLayout(header_layout)
 
-        # Текущий промт
+        # Кнопки выбора
+        select_layout = QHBoxLayout()
+        self.select_all_btn = QPushButton("☑ Выбрать все")
+        self.select_all_btn.clicked.connect(self.select_all)
+        select_layout.addWidget(self.select_all_btn)
+
+        self.deselect_all_btn = QPushButton("☐ Снять все")
+        self.deselect_all_btn.clicked.connect(self.deselect_all)
+        select_layout.addWidget(self.deselect_all_btn)
+        
+        select_layout.addStretch()
+        layout.addLayout(select_layout)
+
+        # Текущий промпт
         self.prompt_label = QLabel("")
         self.prompt_label.setWordWrap(True)
         self.prompt_label.setStyleSheet("""
@@ -361,19 +484,19 @@ class ResultsTab(QWidget):
 
         # Таблица результатов
         self.results_table = QTableWidget()
-        self.results_table.setColumnCount(5)
-        self.results_table.setHorizontalHeaderLabels(["", "Модель", "Ответ", "Токены", ""])
+        self.results_table.setColumnCount(4)
+        self.results_table.setHorizontalHeaderLabels(["", "Модель", "Ответ", "Токены"])
         self.results_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Fixed)
         self.results_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
         self.results_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
         self.results_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeToContents)
-        self.results_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.Fixed)
         self.results_table.setColumnWidth(0, 30)
-        self.results_table.setColumnWidth(4, 80)
         self.results_table.setAlternatingRowColors(True)
         self.results_table.setSortingEnabled(True)
         self.results_table.setWordWrap(True)  # Перенос текста
         self.results_table.verticalHeader().setDefaultSectionSize(120)  # Высота строк
+        self.results_table.setSelectionBehavior(QTableWidget.SelectRows)
+        self.results_table.doubleClicked.connect(self.view_selected_result)
         self.results_table.setStyleSheet("""
             QTableWidget {
                 border: 1px solid #dee2e6;
@@ -433,7 +556,7 @@ class ResultsTab(QWidget):
         prompt = self.results_store.current_prompt
         if prompt:
             display_prompt = prompt[:200] + "..." if len(prompt) > 200 else prompt
-            self.prompt_label.setText(f"Промт: {display_prompt}")
+            self.prompt_label.setText(f"Промпт: {display_prompt}")
         else:
             self.prompt_label.setText("")
 
@@ -464,32 +587,7 @@ class ResultsTab(QWidget):
             tokens_item = QTableWidgetItem(str(result.tokens))
             self.results_table.setItem(row, 3, tokens_item)
 
-            # Кнопка "Открыть"
-            open_btn = QPushButton("📖 Открыть")
-            open_btn.clicked.connect(
-                lambda _, name=result.model_name, resp=result.response: self.open_response(name, resp)
-            )
-            open_btn.setStyleSheet("""
-                QPushButton {
-                    background-color: #9b59b6;
-                    color: white;
-                    border: none;
-                    padding: 5px 10px;
-                    border-radius: 3px;
-                    font-size: 12px;
-                }
-                QPushButton:hover {
-                    background-color: #8e44ad;
-                }
-            """)
-            self.results_table.setCellWidget(row, 4, open_btn)
-
         self.results_table.resizeRowsToContents()
-
-    def open_response(self, model_name: str, response: str):
-        """Открыть ответ в отдельном окне с форматированием Markdown."""
-        dialog = MarkdownViewerDialog(model_name, response, self)
-        dialog.exec_()
 
     def toggle_selection(self, index: int):
         """Переключить выбор результата."""
@@ -534,6 +632,37 @@ class ResultsTab(QWidget):
         self.results_store.clear()
         self.update_results()
 
+    def get_selected_row(self) -> int:
+        """Получить индекс выбранной строки."""
+        selected = self.results_table.selectedItems()
+        if not selected:
+            return -1
+        return selected[0].row()
+
+    def view_selected_result(self):
+        """Просмотр выбранного результата."""
+        row = self.get_selected_row()
+        if row < 0 or row >= len(self.results_store.results):
+            QMessageBox.warning(self, "Ошибка", "Выберите результат")
+            return
+        result = self.results_store.results[row]
+        dialog = MarkdownViewerDialog(result.model_name, result.response, self)
+        dialog.exec_()
+
+    def delete_selected_result(self):
+        """Удалить выбранный результат из временного хранилища."""
+        row = self.get_selected_row()
+        if row < 0 or row >= len(self.results_store.results):
+            QMessageBox.warning(self, "Ошибка", "Выберите результат")
+            return
+        reply = QMessageBox.question(
+            self, "Подтверждение", "Удалить выбранный результат?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+        if reply == QMessageBox.Yes:
+            del self.results_store._results[row]
+            self.update_results()
+
 
 class ModelsTab(QWidget):
     """Вкладка «Модели»."""
@@ -548,16 +677,62 @@ class ModelsTab(QWidget):
         layout = QVBoxLayout(self)
         layout.setSpacing(10)
 
-        # Заголовок
+        # Заголовок и CRUD кнопки
+        header_layout = QHBoxLayout()
         title = QLabel("Управление моделями")
         title.setStyleSheet("font-size: 18px; font-weight: bold; color: #2c3e50;")
-        layout.addWidget(title)
+        header_layout.addWidget(title)
+        header_layout.addStretch()
+
+        self.view_model_btn = QPushButton("📖 Просмотр")
+        self.view_model_btn.clicked.connect(self.view_model)
+        self.view_model_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #9b59b6;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+            }
+            QPushButton:hover { background-color: #8e44ad; }
+        """)
+        header_layout.addWidget(self.view_model_btn)
+
+        self.edit_model_btn = QPushButton("✏️ Изменить")
+        self.edit_model_btn.clicked.connect(self.edit_model)
+        self.edit_model_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #3498db;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+            }
+            QPushButton:hover { background-color: #2980b9; }
+        """)
+        header_layout.addWidget(self.edit_model_btn)
+
+        self.delete_model_btn = QPushButton("🗑️ Удалить")
+        self.delete_model_btn.clicked.connect(self.delete_selected_model)
+        self.delete_model_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #e74c3c;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+            }
+            QPushButton:hover { background-color: #c0392b; }
+        """)
+        header_layout.addWidget(self.delete_model_btn)
+
+        layout.addLayout(header_layout)
 
         # Таблица моделей
         self.models_table = QTableWidget()
-        self.models_table.setColumnCount(7)
+        self.models_table.setColumnCount(6)
         self.models_table.setHorizontalHeaderLabels(
-            ["Активна", "Название", "Провайдер", "URL", "API-ключ", "Model ID", ""]
+            ["Активна", "Название", "Провайдер", "URL", "API-ключ", "Model ID"]
         )
         self.models_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Fixed)
         self.models_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
@@ -565,12 +740,14 @@ class ModelsTab(QWidget):
         self.models_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
         self.models_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeToContents)
         self.models_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeToContents)
-        self.models_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.Fixed)
         self.models_table.setColumnWidth(0, 60)
-        self.models_table.setColumnWidth(6, 80)
         self.models_table.setAlternatingRowColors(True)
         self.models_table.setSortingEnabled(True)
+        self.models_table.setSelectionBehavior(QTableWidget.SelectRows)
         layout.addWidget(self.models_table)
+        
+        # Кэш моделей для доступа по индексу
+        self.models_cache = []
 
         # Форма добавления
         form_frame = QFrame()
@@ -651,9 +828,9 @@ class ModelsTab(QWidget):
     def load_models(self):
         """Загрузить список моделей."""
         self.models_table.setRowCount(0)
-        models = self.model_manager.get_all_models()
+        self.models_cache = self.model_manager.get_all_models()
 
-        for model in models:
+        for model in self.models_cache:
             row = self.models_table.rowCount()
             self.models_table.insertRow(row)
 
@@ -671,23 +848,6 @@ class ModelsTab(QWidget):
             self.models_table.setItem(row, 3, QTableWidgetItem(model["api_url"]))
             self.models_table.setItem(row, 4, QTableWidgetItem(model["api_key_env"]))
             self.models_table.setItem(row, 5, QTableWidgetItem(model["model_id"]))
-
-            # Кнопка удаления
-            delete_btn = QPushButton("🗑")
-            delete_btn.clicked.connect(lambda _, mid=model["id"]: self.delete_model(mid))
-            delete_btn.setStyleSheet("""
-                QPushButton {
-                    background-color: #e74c3c;
-                    color: white;
-                    border: none;
-                    padding: 5px 10px;
-                    border-radius: 3px;
-                }
-                QPushButton:hover {
-                    background-color: #c0392b;
-                }
-            """)
-            self.models_table.setCellWidget(row, 6, delete_btn)
 
     def add_model(self):
         """Добавить новую модель."""
@@ -733,6 +893,62 @@ class ModelsTab(QWidget):
             self.model_manager.delete_model(model_id)
             self.load_models()
 
+    def get_selected_model(self) -> dict:
+        """Получить выбранную модель."""
+        selected = self.models_table.selectedItems()
+        if not selected:
+            return None
+        row = selected[0].row()
+        if row < len(self.models_cache):
+            return self.models_cache[row]
+        return None
+
+    def view_model(self):
+        """Просмотр выбранной модели."""
+        model = self.get_selected_model()
+        if not model:
+            QMessageBox.warning(self, "Ошибка", "Выберите модель")
+            return
+        info = f"""**Название:** {model['name']}
+
+**Провайдер:** {model['provider']}
+
+**API URL:** {model['api_url']}
+
+**API ключ:** {model['api_key_env']}
+
+**Model ID:** {model['model_id']}
+
+**Активна:** {'Да' if model['is_active'] else 'Нет'}
+"""
+        dialog = MarkdownViewerDialog(model['name'], info, self)
+        dialog.exec_()
+
+    def edit_model(self):
+        """Редактировать выбранную модель."""
+        model = self.get_selected_model()
+        if not model:
+            QMessageBox.warning(self, "Ошибка", "Выберите модель")
+            return
+        # Заполнить форму
+        self.name_edit.setText(model['name'])
+        self.provider_combo.setCurrentText(model['provider'])
+        self.url_edit.setText(model['api_url'])
+        self.api_key_edit.setText(model['api_key_env'])
+        self.model_id_edit.setText(model['model_id'])
+        # Удалить старую модель
+        self.model_manager.delete_model(model['id'])
+        self.load_models()
+        QMessageBox.information(self, "Редактирование", "Измените данные и нажмите 'Добавить'")
+
+    def delete_selected_model(self):
+        """Удалить выбранную модель."""
+        model = self.get_selected_model()
+        if not model:
+            QMessageBox.warning(self, "Ошибка", "Выберите модель")
+            return
+        self.delete_model(model['id'])
+
     def add_default_models(self):
         """Добавить модели по умолчанию."""
         self.model_manager.add_default_models()
@@ -740,12 +956,81 @@ class ModelsTab(QWidget):
         QMessageBox.information(self, "Готово", "Модели по умолчанию добавлены")
 
 
+class EditResultDialog(QDialog):
+    """Диалог для редактирования результата."""
+
+    def __init__(self, result: dict = None, parent=None):
+        super().__init__(parent)
+        self.result = result or {}
+        self.setWindowTitle("Редактирование записи" if result else "Новая запись")
+        self.setMinimumSize(600, 400)
+        self.setup_ui()
+
+    def setup_ui(self):
+        layout = QVBoxLayout(self)
+
+        # Модель
+        model_layout = QHBoxLayout()
+        model_layout.addWidget(QLabel("Модель:"))
+        self.model_edit = QLineEdit()
+        self.model_edit.setText(self.result.get("model_name", ""))
+        model_layout.addWidget(self.model_edit)
+        layout.addLayout(model_layout)
+
+        # Промпт
+        layout.addWidget(QLabel("Промпт:"))
+        self.prompt_edit = QTextEdit()
+        self.prompt_edit.setText(self.result.get("prompt_text", ""))
+        self.prompt_edit.setMaximumHeight(100)
+        layout.addWidget(self.prompt_edit)
+
+        # Ответ
+        layout.addWidget(QLabel("Ответ:"))
+        self.response_edit = QTextEdit()
+        self.response_edit.setText(self.result.get("response", ""))
+        layout.addWidget(self.response_edit)
+
+        # Кнопки
+        buttons_layout = QHBoxLayout()
+        buttons_layout.addStretch()
+
+        cancel_btn = QPushButton("Отмена")
+        cancel_btn.clicked.connect(self.reject)
+        buttons_layout.addWidget(cancel_btn)
+
+        save_btn = QPushButton("💾 Сохранить")
+        save_btn.clicked.connect(self.accept)
+        save_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #27ae60;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+            }
+            QPushButton:hover { background-color: #219a52; }
+        """)
+        buttons_layout.addWidget(save_btn)
+        layout.addLayout(buttons_layout)
+
+    def get_values(self) -> dict:
+        return {
+            "model_name": self.model_edit.text(),
+            "prompt_text": self.prompt_edit.toPlainText(),
+            "response": self.response_edit.toPlainText(),
+        }
+
+
 class HistoryTab(QWidget):
-    """Вкладка «История»."""
+    """Вкладка «История» с пагинацией и CRUD."""
 
     def __init__(self, db: Database, parent=None):
         super().__init__(parent)
         self.db = db
+        self.current_page = 1
+        self.page_size = 20
+        self.total_rows = 0
+        self.results_cache = []  # Кэш результатов для доступа по индексу
         self.setup_ui()
 
     def setup_ui(self):
@@ -763,7 +1048,7 @@ class HistoryTab(QWidget):
         self.search_edit = QLineEdit()
         self.search_edit.setPlaceholderText("🔍 Поиск...")
         self.search_edit.setMaximumWidth(300)
-        self.search_edit.returnPressed.connect(self.load_history)
+        self.search_edit.returnPressed.connect(self.search_and_reset)
         header_layout.addWidget(self.search_edit)
 
         refresh_btn = QPushButton("⟳")
@@ -773,43 +1058,147 @@ class HistoryTab(QWidget):
 
         layout.addLayout(header_layout)
 
+        # CRUD кнопки
+        crud_layout = QHBoxLayout()
+
+        self.view_btn = QPushButton("📖 Просмотр")
+        self.view_btn.clicked.connect(self.view_result)
+        self.view_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #9b59b6;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+            }
+            QPushButton:hover { background-color: #8e44ad; }
+        """)
+        crud_layout.addWidget(self.view_btn)
+
+        self.edit_btn = QPushButton("✏️ Изменить")
+        self.edit_btn.clicked.connect(self.edit_result)
+        self.edit_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #3498db;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+            }
+            QPushButton:hover { background-color: #2980b9; }
+        """)
+        crud_layout.addWidget(self.edit_btn)
+
+        self.delete_btn = QPushButton("🗑️ Удалить")
+        self.delete_btn.clicked.connect(self.delete_selected)
+        self.delete_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #e74c3c;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+            }
+            QPushButton:hover { background-color: #c0392b; }
+        """)
+        crud_layout.addWidget(self.delete_btn)
+
+        crud_layout.addStretch()
+
+        export_md_btn = QPushButton("📄 Markdown")
+        export_md_btn.clicked.connect(self.export_markdown)
+        crud_layout.addWidget(export_md_btn)
+
+        export_json_btn = QPushButton("📋 JSON")
+        export_json_btn.clicked.connect(self.export_json)
+        crud_layout.addWidget(export_json_btn)
+
+        layout.addLayout(crud_layout)
+
         # Таблица истории
         self.history_table = QTableWidget()
-        self.history_table.setColumnCount(5)
+        self.history_table.setColumnCount(4)
         self.history_table.setHorizontalHeaderLabels(
-            ["Дата", "Модель", "Промт", "Ответ", ""]
+            ["Дата", "Модель", "Промпт", "Ответ"]
         )
         self.history_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self.history_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
         self.history_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
         self.history_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
-        self.history_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.Fixed)
-        self.history_table.setColumnWidth(4, 80)
         self.history_table.setAlternatingRowColors(True)
         self.history_table.setSortingEnabled(True)
+        self.history_table.setSelectionBehavior(QTableWidget.SelectRows)
+        self.history_table.doubleClicked.connect(self.view_result)
         layout.addWidget(self.history_table)
 
-        # Кнопки экспорта
-        export_layout = QHBoxLayout()
-        export_layout.addStretch()
+        # Пагинация
+        pagination_layout = QHBoxLayout()
 
-        export_md_btn = QPushButton("📄 Экспорт в Markdown")
-        export_md_btn.clicked.connect(self.export_markdown)
-        export_layout.addWidget(export_md_btn)
+        self.first_btn = QPushButton("⏮")
+        self.first_btn.setFixedWidth(40)
+        self.first_btn.clicked.connect(self.go_first)
+        pagination_layout.addWidget(self.first_btn)
 
-        export_json_btn = QPushButton("📋 Экспорт в JSON")
-        export_json_btn.clicked.connect(self.export_json)
-        export_layout.addWidget(export_json_btn)
+        self.prev_btn = QPushButton("◀")
+        self.prev_btn.setFixedWidth(40)
+        self.prev_btn.clicked.connect(self.go_prev)
+        pagination_layout.addWidget(self.prev_btn)
 
-        layout.addLayout(export_layout)
+        self.page_label = QLabel("Страница 1 из 1")
+        self.page_label.setAlignment(Qt.AlignCenter)
+        self.page_label.setMinimumWidth(150)
+        pagination_layout.addWidget(self.page_label)
+
+        self.next_btn = QPushButton("▶")
+        self.next_btn.setFixedWidth(40)
+        self.next_btn.clicked.connect(self.go_next)
+        pagination_layout.addWidget(self.next_btn)
+
+        self.last_btn = QPushButton("⏭")
+        self.last_btn.setFixedWidth(40)
+        self.last_btn.clicked.connect(self.go_last)
+        pagination_layout.addWidget(self.last_btn)
+
+        pagination_layout.addStretch()
+
+        pagination_layout.addWidget(QLabel("На странице:"))
+        self.page_size_combo = QComboBox()
+        self.page_size_combo.addItems(["10", "20", "50", "100"])
+        self.page_size_combo.setCurrentText("20")
+        self.page_size_combo.currentTextChanged.connect(self.change_page_size)
+        pagination_layout.addWidget(self.page_size_combo)
+
+        self.total_label = QLabel("Всего: 0")
+        pagination_layout.addWidget(self.total_label)
+
+        layout.addLayout(pagination_layout)
+
+    def search_and_reset(self):
+        """Сброс на первую страницу при поиске."""
+        self.current_page = 1
+        self.load_history()
 
     def load_history(self):
-        """Загрузить историю."""
+        """Загрузить историю с пагинацией."""
         self.history_table.setRowCount(0)
         search = self.search_edit.text().strip()
-        results = self.db.get_results(search=search, limit=100)
 
-        for result in results:
+        # Получить общее количество
+        all_results = self.db.get_results(search=search, limit=10000)
+        self.total_rows = len(all_results)
+
+        # Расчёт пагинации
+        total_pages = max(1, (self.total_rows + self.page_size - 1) // self.page_size)
+        if self.current_page > total_pages:
+            self.current_page = total_pages
+
+        # Получить данные для текущей страницы
+        offset = (self.current_page - 1) * self.page_size
+        self.results_cache = self.db.get_results(
+            search=search, limit=self.page_size, offset=offset
+        )
+
+        for result in self.results_cache:
             row = self.history_table.rowCount()
             self.history_table.insertRow(row)
 
@@ -820,7 +1209,7 @@ class HistoryTab(QWidget):
             # Модель
             self.history_table.setItem(row, 1, QTableWidgetItem(result["model_name"]))
 
-            # Промт
+            # Промпт
             prompt_text = result["prompt_text"][:100] + "..." if len(result["prompt_text"]) > 100 else result["prompt_text"]
             prompt_item = QTableWidgetItem(prompt_text)
             prompt_item.setToolTip(result["prompt_text"])
@@ -832,26 +1221,99 @@ class HistoryTab(QWidget):
             response_item.setToolTip(result["response"])
             self.history_table.setItem(row, 3, response_item)
 
-            # Кнопка удаления
-            delete_btn = QPushButton("🗑")
-            delete_btn.clicked.connect(lambda _, rid=result["id"]: self.delete_result(rid))
-            delete_btn.setStyleSheet("""
-                QPushButton {
-                    background-color: #e74c3c;
-                    color: white;
-                    border: none;
-                    padding: 5px 10px;
-                    border-radius: 3px;
-                }
-            """)
-            self.history_table.setCellWidget(row, 4, delete_btn)
-
         self.history_table.resizeRowsToContents()
 
-    def delete_result(self, result_id: int):
-        """Удалить результат."""
-        self.db.delete_result(result_id)
+        # Обновить метки пагинации
+        self.page_label.setText(f"Страница {self.current_page} из {total_pages}")
+        self.total_label.setText(f"Всего: {self.total_rows}")
+
+        # Состояние кнопок
+        self.first_btn.setEnabled(self.current_page > 1)
+        self.prev_btn.setEnabled(self.current_page > 1)
+        self.next_btn.setEnabled(self.current_page < total_pages)
+        self.last_btn.setEnabled(self.current_page < total_pages)
+
+    def go_first(self):
+        self.current_page = 1
         self.load_history()
+
+    def go_prev(self):
+        if self.current_page > 1:
+            self.current_page -= 1
+            self.load_history()
+
+    def go_next(self):
+        total_pages = max(1, (self.total_rows + self.page_size - 1) // self.page_size)
+        if self.current_page < total_pages:
+            self.current_page += 1
+            self.load_history()
+
+    def go_last(self):
+        self.current_page = max(1, (self.total_rows + self.page_size - 1) // self.page_size)
+        self.load_history()
+
+    def change_page_size(self, value: str):
+        self.page_size = int(value)
+        self.current_page = 1
+        self.load_history()
+
+    def get_selected_result(self) -> dict:
+        """Получить выбранный результат."""
+        selected = self.history_table.selectedItems()
+        if not selected:
+            return None
+        row = selected[0].row()
+        if row < len(self.results_cache):
+            return self.results_cache[row]
+        return None
+
+    def view_result(self):
+        """Просмотр результата в Markdown."""
+        result = self.get_selected_result()
+        if not result:
+            QMessageBox.warning(self, "Ошибка", "Выберите запись")
+            return
+        dialog = MarkdownViewerDialog(result["model_name"], result["response"], self)
+        dialog.exec_()
+
+    def edit_result(self):
+        """Редактировать результат."""
+        result = self.get_selected_result()
+        if not result:
+            QMessageBox.warning(self, "Ошибка", "Выберите запись")
+            return
+
+        dialog = EditResultDialog(result, self)
+        if dialog.exec_() == QDialog.Accepted:
+            values = dialog.get_values()
+            # Обновить в базе данных
+            cursor = self.db.connection.cursor()
+            cursor.execute(
+                """
+                UPDATE results 
+                SET model_name = ?, prompt_text = ?, response = ?
+                WHERE id = ?
+                """,
+                (values["model_name"], values["prompt_text"], values["response"], result["id"])
+            )
+            self.db.connection.commit()
+            self.load_history()
+            QMessageBox.information(self, "Успех", "Запись обновлена")
+
+    def delete_selected(self):
+        """Удалить выбранный результат."""
+        result = self.get_selected_result()
+        if not result:
+            QMessageBox.warning(self, "Ошибка", "Выберите запись")
+            return
+
+        reply = QMessageBox.question(
+            self, "Подтверждение", "Удалить выбранную запись?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+        if reply == QMessageBox.Yes:
+            self.db.delete_result(result["id"])
+            self.load_history()
 
     def export_markdown(self):
         """Экспорт в Markdown."""
@@ -872,7 +1334,7 @@ class HistoryTab(QWidget):
             f.write("# История ChatList\n\n")
             for r in results:
                 f.write(f"## {r['model_name']} — {r['created_at']}\n\n")
-                f.write(f"**Промт:** {r['prompt_text']}\n\n")
+                f.write(f"**Промпт:** {r['prompt_text']}\n\n")
                 f.write(f"**Ответ:**\n\n{r['response']}\n\n---\n\n")
 
         log_export(file_path, "Markdown")

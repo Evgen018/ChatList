@@ -55,7 +55,7 @@ class BaseAPIClient(ABC):
         Отправить сообщение в API.
 
         Args:
-            prompt: Текст промта.
+            prompt: Текст промпта.
 
         Returns:
             APIResponse с результатом.
@@ -383,10 +383,10 @@ async def send_to_models(
     prompt: str, models: list[dict], timeout: int = 60
 ) -> list[dict]:
     """
-    Отправить промт во все указанные модели.
+    Отправить промпт во все указанные модели.
 
     Args:
-        prompt: Текст промта.
+        prompt: Текст промпта.
         models: Список моделей из базы данных.
         timeout: Таймаут запроса в секундах.
 
@@ -444,7 +444,7 @@ def send_to_models_sync(
     Синхронная обёртка для send_to_models.
 
     Args:
-        prompt: Текст промта.
+        prompt: Текст промпта.
         models: Список моделей из базы данных.
         timeout: Таймаут запроса в секундах.
 

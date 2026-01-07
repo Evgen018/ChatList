@@ -60,7 +60,7 @@ def log_request(prompt: str, models: list) -> None:
     """Логировать отправку запроса."""
     model_names = [m.get("name", "Unknown") for m in models]
     logger.info(f"Отправка запроса в {len(models)} моделей: {', '.join(model_names)}")
-    logger.debug(f"Промт: {prompt[:200]}{'...' if len(prompt) > 200 else ''}")
+    logger.debug(f"Промпт: {prompt[:200]}{'...' if len(prompt) > 200 else ''}")
 
 
 def log_response(model_name: str, success: bool, tokens: int = 0, error: str = None) -> None:

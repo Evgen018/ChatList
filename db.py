@@ -32,7 +32,7 @@ class Database:
         """Создать таблицы, если они не существуют."""
         cursor = self.connection.cursor()
 
-        # Таблица промтов
+        # Таблица промптов
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS prompts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -108,18 +108,18 @@ class Database:
             self.connection.close()
             self.connection = None
 
-    # === CRUD для промтов ===
+    # === CRUD для промптов ===
 
     def add_prompt(self, text: str, tags: str = "") -> int:
         """
-        Добавить новый промт.
+        Добавить новый промпт.
 
         Args:
-            text: Текст промта.
+            text: Текст промпта.
             tags: Теги через запятую.
 
         Returns:
-            ID созданного промта.
+            ID созданного промпта.
         """
         cursor = self.connection.cursor()
         cursor.execute(
@@ -133,7 +133,7 @@ class Database:
         self, search: str = "", limit: int = 100, offset: int = 0
     ) -> list[dict]:
         """
-        Получить список промтов.
+        Получить список промптов.
 
         Args:
             search: Строка поиска.
@@ -141,7 +141,7 @@ class Database:
             offset: Смещение.
 
         Returns:
-            Список промтов.
+            Список промптов.
         """
         cursor = self.connection.cursor()
         if search:
@@ -162,14 +162,14 @@ class Database:
         return [dict(row) for row in cursor.fetchall()]
 
     def get_prompt_by_id(self, prompt_id: int) -> Optional[dict]:
-        """Получить промт по ID."""
+        """Получить промпт по ID."""
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM prompts WHERE id = ?", (prompt_id,))
         row = cursor.fetchone()
         return dict(row) if row else None
 
     def update_prompt(self, prompt_id: int, text: str, tags: str = "") -> bool:
-        """Обновить промт."""
+        """Обновить промпт."""
         cursor = self.connection.cursor()
         cursor.execute(
             """
@@ -183,7 +183,7 @@ class Database:
         return cursor.rowcount > 0
 
     def delete_prompt(self, prompt_id: int) -> bool:
-        """Удалить промт."""
+        """Удалить промпт."""
         cursor = self.connection.cursor()
         cursor.execute("DELETE FROM prompts WHERE id = ?", (prompt_id,))
         self.connection.commit()

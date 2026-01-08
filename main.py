@@ -447,7 +447,7 @@ class RequestTab(QWidget):
         self.improve_btn.clicked.connect(self.improve_prompt)
         self.improve_btn.setStyleSheet("""
             QPushButton {
-                background-color: #9b59b6;
+                background-color: #27ae60;
                 color: white;
                 border: none;
                 padding: 12px 25px;
@@ -456,7 +456,7 @@ class RequestTab(QWidget):
                 font-weight: bold;
             }
             QPushButton:hover {
-                background-color: #8e44ad;
+                background-color: #219a52;
             }
             QPushButton:disabled {
                 background-color: #bdc3c7;

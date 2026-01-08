@@ -105,8 +105,160 @@ class MarkdownViewerDialog(QDialog):
         clipboard.setText(content)
         QMessageBox.information(self, "Готово", "Текст скопирован в буфер обмена")
 
+
+class PromptImproverDialog(QDialog):
+    """Диалог для выбора улучшенного промпта."""
+
+    prompt_selected = pyqtSignal(str)  # Сигнал с выбранным промптом
+
+    def __init__(self, result: 'ImprovedPrompt', parent=None):
+        super().__init__(parent)
+        self.result = result
+        self.setWindowTitle("✨ Улучшение промпта")
+        self.setMinimumSize(900, 700)
+        self.setup_ui()
+
+    def setup_ui(self):
+        layout = QVBoxLayout(self)
+        layout.setSpacing(15)
+
+        # Оригинальный промпт
+        orig_label = QLabel("📝 Оригинальный промпт:")
+        orig_label.setStyleSheet("font-weight: bold; font-size: 14px; color: #7f8c8d;")
+        layout.addWidget(orig_label)
+
+        self.orig_text = QTextEdit()
+        self.orig_text.setPlainText(self.result.original)
+        self.orig_text.setReadOnly(True)
+        self.orig_text.setMaximumHeight(80)
+        self.orig_text.setStyleSheet("""
+            QTextEdit {
+                background-color: #f8f9fa;
+                border: 1px solid #dee2e6;
+                border-radius: 5px;
+                padding: 8px;
+                color: #6c757d;
+            }
+        """)
+        layout.addWidget(self.orig_text)
+
+        # Улучшенный промпт
+        improved_label = QLabel("✨ Улучшенный промпт:")
+        improved_label.setStyleSheet("font-weight: bold; font-size: 14px; color: #27ae60;")
+        layout.addWidget(improved_label)
+
+        improved_frame = QFrame()
+        improved_frame.setStyleSheet("""
+            QFrame {
+                background-color: #e8f5e9;
+                border: 2px solid #27ae60;
+                border-radius: 8px;
+            }
+        """)
+        improved_layout = QVBoxLayout(improved_frame)
+
+        self.improved_text = QTextEdit()
+        self.improved_text.setPlainText(self.result.improved)
+        self.improved_text.setReadOnly(True)
+        self.improved_text.setMinimumHeight(100)
+        self.improved_text.setStyleSheet("""
+            QTextEdit {
+                background-color: transparent;
+                border: none;
+                padding: 5px;
+            }
+        """)
+        improved_layout.addWidget(self.improved_text)
+
+        use_improved_btn = QPushButton("✅ Использовать этот вариант")
+        use_improved_btn.clicked.connect(lambda: self.select_prompt(self.result.improved))
+        use_improved_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #27ae60;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-weight: bold;
+            }
+            QPushButton:hover { background-color: #219a52; }
+        """)
+        improved_layout.addWidget(use_improved_btn)
+
+        layout.addWidget(improved_frame)
+
+        # Альтернативы
+        if self.result.alternatives:
+            alt_label = QLabel("🔄 Альтернативные варианты:")
+            alt_label.setStyleSheet("font-weight: bold; font-size: 14px; color: #3498db;")
+            layout.addWidget(alt_label)
+
+            for i, alt in enumerate(self.result.alternatives):
+                alt_frame = QFrame()
+                alt_frame.setStyleSheet("""
+                    QFrame {
+                        background-color: #e3f2fd;
+                        border: 1px solid #3498db;
+                        border-radius: 5px;
+                    }
+                """)
+                alt_layout = QVBoxLayout(alt_frame)
+
+                alt_title = QLabel(f"Альтернатива {i + 1}")
+                alt_title.setStyleSheet("font-weight: bold; color: #2980b9;")
+                alt_layout.addWidget(alt_title)
+
+                alt_text = QTextEdit()
+                alt_text.setPlainText(alt)
+                alt_text.setReadOnly(True)
+                alt_text.setMaximumHeight(80)
+                alt_text.setStyleSheet("""
+                    QTextEdit {
+                        background-color: transparent;
+                        border: none;
+                    }
+                """)
+                alt_layout.addWidget(alt_text)
+
+                use_alt_btn = QPushButton(f"Использовать альтернативу {i + 1}")
+                use_alt_btn.clicked.connect(lambda checked, text=alt: self.select_prompt(text))
+                use_alt_btn.setStyleSheet("""
+                    QPushButton {
+                        background-color: #3498db;
+                        color: white;
+                        border: none;
+                        padding: 8px 15px;
+                        border-radius: 4px;
+                    }
+                    QPushButton:hover { background-color: #2980b9; }
+                """)
+                alt_layout.addWidget(use_alt_btn)
+
+                layout.addWidget(alt_frame)
+
+        # Кнопка закрытия
+        close_btn = QPushButton("Закрыть")
+        close_btn.clicked.connect(self.reject)
+        close_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #95a5a6;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+            }
+            QPushButton:hover { background-color: #7f8c8d; }
+        """)
+        layout.addWidget(close_btn)
+
+    def select_prompt(self, text: str):
+        """Выбрать промпт и закрыть диалог."""
+        self.prompt_selected.emit(text)
+        self.accept()
+
+
 from db import Database
-from models import ModelManager, ResultsStore
+from models import ModelManager, ResultsStore, PromptImprover, ImprovedPrompt
 from network import send_to_models_sync
 from logger import (
     log_request,
@@ -139,10 +291,31 @@ class RequestWorker(QThread):
             self.error.emit(str(e))
 
 
+class ImproveWorker(QThread):
+    """Поток для улучшения промпта через AI."""
+
+    finished = pyqtSignal(object)  # ImprovedPrompt
+    error = pyqtSignal(str)
+
+    def __init__(self, prompt: str, improver: PromptImprover, timeout: int = 90):
+        super().__init__()
+        self.prompt = prompt
+        self.improver = improver
+        self.timeout = timeout
+
+    def run(self):
+        try:
+            result = self.improver.improve_sync(self.prompt, self.timeout)
+            self.finished.emit(result)
+        except Exception as e:
+            self.error.emit(str(e))
+
+
 class RequestTab(QWidget):
     """Вкладка «Запрос»."""
 
     request_sent = pyqtSignal(str, list)  # prompt, models
+    improve_requested = pyqtSignal(str)  # prompt для улучшения
 
     def __init__(self, db: Database, model_manager: ModelManager, parent=None):
         super().__init__(parent)
@@ -267,6 +440,29 @@ class RequestTab(QWidget):
         buttons_layout.addWidget(self.save_prompt_btn)
 
         buttons_layout.addStretch()
+
+        # Кнопка улучшения промпта
+        self.improve_btn = QPushButton("✨ Улучшить")
+        self.improve_btn.setToolTip("AI-ассистент улучшит ваш промпт")
+        self.improve_btn.clicked.connect(self.improve_prompt)
+        self.improve_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #9b59b6;
+                color: white;
+                border: none;
+                padding: 12px 25px;
+                border-radius: 5px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #8e44ad;
+            }
+            QPushButton:disabled {
+                background-color: #bdc3c7;
+            }
+        """)
+        buttons_layout.addWidget(self.improve_btn)
 
         self.send_btn = QPushButton("🚀 Отправить")
         self.send_btn.clicked.connect(self.send_request)
@@ -405,6 +601,20 @@ class RequestTab(QWidget):
             return
 
         self.request_sent.emit(prompt, models)
+
+    def improve_prompt(self):
+        """Запросить улучшение промпта через AI."""
+        prompt = self.prompt_edit.toPlainText().strip()
+        if not prompt:
+            QMessageBox.warning(self, "Ошибка", "Введите текст промпта для улучшения")
+            return
+
+        self.improve_requested.emit(prompt)
+
+    def set_prompt_text(self, text: str):
+        """Установить текст промпта (используется для подстановки улучшенного)."""
+        self.prompt_edit.setPlainText(text)
+        self.status_label.setText("Промпт обновлён")
 
 
 class ResultsTab(QWidget):
@@ -1404,6 +1614,37 @@ class SettingsTab(QWidget):
         tokens_layout.addStretch()
         layout.addLayout(tokens_layout)
 
+        # Разделитель
+        separator = QFrame()
+        separator.setFrameShape(QFrame.HLine)
+        separator.setStyleSheet("background-color: #dee2e6;")
+        layout.addWidget(separator)
+
+        # Настройки AI-ассистента
+        ai_title = QLabel("✨ AI-ассистент для улучшения промптов")
+        ai_title.setStyleSheet("font-size: 16px; font-weight: bold; color: #9b59b6;")
+        layout.addWidget(ai_title)
+
+        # Выбор модели для улучшения
+        model_layout = QHBoxLayout()
+        model_label = QLabel("Модель для улучшения:")
+        self.improve_model_combo = QComboBox()
+        self.improve_model_combo.setMinimumWidth(350)
+        
+        # Добавляем рекомендуемые модели
+        for name, model_id in PromptImprover.RECOMMENDED_MODELS:
+            self.improve_model_combo.addItem(name, model_id)
+        
+        model_layout.addWidget(model_label)
+        model_layout.addWidget(self.improve_model_combo)
+        model_layout.addStretch()
+        layout.addLayout(model_layout)
+
+        # Подсказка
+        hint_label = QLabel("💡 Модель используется для анализа и улучшения ваших промптов")
+        hint_label.setStyleSheet("color: #7f8c8d; font-style: italic;")
+        layout.addWidget(hint_label)
+
         # Кнопка сохранения
         save_btn = QPushButton("💾 Сохранить настройки")
         save_btn.clicked.connect(self.save_settings)
@@ -1427,14 +1668,24 @@ class SettingsTab(QWidget):
         """Загрузить настройки."""
         timeout = self.db.get_setting("request_timeout", "60")
         max_tokens = self.db.get_setting("max_tokens", "4096")
+        improve_model = self.db.get_setting(
+            "improve_model", 
+            PromptImprover.RECOMMENDED_MODELS[0][1]
+        )
 
         self.timeout_spin.setValue(int(timeout))
         self.tokens_spin.setValue(int(max_tokens))
+        
+        # Установить выбранную модель
+        index = self.improve_model_combo.findData(improve_model)
+        if index >= 0:
+            self.improve_model_combo.setCurrentIndex(index)
 
     def save_settings(self):
         """Сохранить настройки."""
         self.db.set_setting("request_timeout", str(self.timeout_spin.value()))
         self.db.set_setting("max_tokens", str(self.tokens_spin.value()))
+        self.db.set_setting("improve_model", self.improve_model_combo.currentData())
         QMessageBox.information(self, "Успех", "Настройки сохранены")
 
 
@@ -1450,7 +1701,9 @@ class MainWindow(QMainWindow):
         self.db = Database()
         self.model_manager = ModelManager(self.db)
         self.results_store = ResultsStore()
+        self.prompt_improver = PromptImprover(self.db)
         self.worker = None
+        self.improve_worker = None
 
         self.setup_ui()
         self.setup_connections()
@@ -1503,6 +1756,7 @@ class MainWindow(QMainWindow):
     def setup_connections(self):
         """Настройка сигналов и слотов."""
         self.request_tab.request_sent.connect(self.send_requests)
+        self.request_tab.improve_requested.connect(self.improve_prompt)
 
     def on_tab_changed(self, index: int):
         """Обработка переключения вкладок."""
@@ -1559,6 +1813,50 @@ class MainWindow(QMainWindow):
         self.request_tab.send_btn.setEnabled(True)
         self.request_tab.status_label.setText(f"Ошибка: {error}")
         QMessageBox.critical(self, "Ошибка", error)
+
+    def improve_prompt(self, prompt: str):
+        """Улучшить промпт через AI-ассистент."""
+        # Показать прогресс
+        self.request_tab.progress.setVisible(True)
+        self.request_tab.progress.setRange(0, 0)
+        self.request_tab.improve_btn.setEnabled(False)
+        self.request_tab.send_btn.setEnabled(False)
+        self.request_tab.status_label.setText("✨ AI улучшает ваш промпт...")
+
+        # Получить таймаут
+        timeout = int(self.db.get_setting("request_timeout", "90"))
+
+        # Запустить воркер
+        self.improve_worker = ImproveWorker(prompt, self.prompt_improver, timeout)
+        self.improve_worker.finished.connect(self.on_improve_finished)
+        self.improve_worker.error.connect(self.on_improve_error)
+        self.improve_worker.start()
+
+    def on_improve_finished(self, result: ImprovedPrompt):
+        """Обработка результата улучшения промпта."""
+        self.request_tab.progress.setVisible(False)
+        self.request_tab.improve_btn.setEnabled(True)
+        self.request_tab.send_btn.setEnabled(True)
+
+        if not result.success:
+            self.request_tab.status_label.setText(f"Ошибка: {result.error}")
+            QMessageBox.warning(self, "Ошибка", f"Не удалось улучшить промпт:\n{result.error}")
+            return
+
+        self.request_tab.status_label.setText("✨ Промпт улучшен!")
+
+        # Открыть диалог выбора
+        dialog = PromptImproverDialog(result, self)
+        dialog.prompt_selected.connect(self.request_tab.set_prompt_text)
+        dialog.exec_()
+
+    def on_improve_error(self, error: str):
+        """Обработка ошибки улучшения."""
+        self.request_tab.progress.setVisible(False)
+        self.request_tab.improve_btn.setEnabled(True)
+        self.request_tab.send_btn.setEnabled(True)
+        self.request_tab.status_label.setText(f"Ошибка: {error}")
+        QMessageBox.critical(self, "Ошибка", f"Ошибка при улучшении промпта:\n{error}")
 
     def closeEvent(self, event):
         """Обработка закрытия окна."""

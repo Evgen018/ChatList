@@ -3,11 +3,41 @@
 """
 
 import os
+import re
+import asyncio
 from dataclasses import dataclass, field
 from typing import Optional
 
 from db import Database
-from network import get_client
+from network import get_client, OpenRouterClient
+
+
+# Системный промпт для AI-ассистента улучшения промптов
+IMPROVE_SYSTEM_PROMPT = """Ты — эксперт по улучшению промптов для языковых моделей.
+
+Твоя задача — проанализировать промпт пользователя и предложить улучшенные версии.
+
+ФОРМАТ ОТВЕТА (строго соблюдай):
+
+## УЛУЧШЕННЫЙ ПРОМПТ
+[Здесь улучшенная версия оригинального промпта — более чёткая, структурированная и эффективная]
+
+## АЛЬТЕРНАТИВА 1: Для кода/технических задач
+[Версия промпта, оптимизированная для программирования и технического анализа]
+
+## АЛЬТЕРНАТИВА 2: Для анализа/исследования  
+[Версия промпта для глубокого анализа и детального исследования темы]
+
+## АЛЬТЕРНАТИВА 3: Для креатива/контента
+[Версия промпта для творческих задач, генерации идей, написания текстов]
+
+ПРАВИЛА:
+- Сохраняй смысл оригинального запроса
+- Добавляй контекст и конкретику
+- Указывай желаемый формат ответа
+- Используй ролевые инструкции ("Ты — эксперт по...")
+- Разбивай сложные задачи на шаги
+- Каждая версия должна быть самодостаточной"""
 
 
 @dataclass
@@ -20,6 +50,17 @@ class TempResult:
     response: str
     tokens: int = 0
     selected: bool = False
+    success: bool = True
+    error: Optional[str] = None
+
+
+@dataclass
+class ImprovedPrompt:
+    """Результат улучшения промпта."""
+    
+    original: str
+    improved: str
+    alternatives: list[str] = field(default_factory=list)
     success: bool = True
     error: Optional[str] = None
 
@@ -200,76 +241,62 @@ class ModelManager:
     def add_default_models(self) -> None:
         """Добавить модели по умолчанию (бесплатные через OpenRouter)."""
         default_models = [
-            # OpenRouter — бесплатные модели (FREE)
+            # OpenRouter — бесплатные модели (FREE) - актуальный список
             {
-                "name": "Llama 3.2 3B (free)",
+                "name": "DeepSeek R1 (free)",
                 "provider": "openrouter",
                 "api_url": "https://openrouter.ai/api/v1",
                 "api_key_env": "OPENROUTER_API_KEY",
-                "model_id": "meta-llama/llama-3.2-3b-instruct:free",
+                "model_id": "deepseek/deepseek-r1-0528:free",
             },
             {
-                "name": "Llama 3.1 8B (free)",
+                "name": "Qwen3 4B (free)",
                 "provider": "openrouter",
                 "api_url": "https://openrouter.ai/api/v1",
                 "api_key_env": "OPENROUTER_API_KEY",
-                "model_id": "meta-llama/llama-3.1-8b-instruct:free",
+                "model_id": "qwen/qwen3-4b:free",
             },
             {
-                "name": "Gemma 2 9B (free)",
+                "name": "Qwen3 Coder (free)",
                 "provider": "openrouter",
                 "api_url": "https://openrouter.ai/api/v1",
                 "api_key_env": "OPENROUTER_API_KEY",
-                "model_id": "google/gemma-2-9b-it:free",
+                "model_id": "qwen/qwen3-coder:free",
             },
             {
-                "name": "Qwen 2.5 7B (free)",
+                "name": "Google Gemma 3n E4B (free)",
                 "provider": "openrouter",
                 "api_url": "https://openrouter.ai/api/v1",
                 "api_key_env": "OPENROUTER_API_KEY",
-                "model_id": "qwen/qwen-2.5-7b-instruct:free",
+                "model_id": "google/gemma-3n-e4b-it:free",
             },
             {
-                "name": "Qwen 2.5 Coder 7B (free)",
+                "name": "Mistral Devstral (free)",
                 "provider": "openrouter",
                 "api_url": "https://openrouter.ai/api/v1",
                 "api_key_env": "OPENROUTER_API_KEY",
-                "model_id": "qwen/qwen-2.5-coder-7b-instruct:free",
+                "model_id": "mistralai/devstral-2512:free",
             },
             {
-                "name": "Mistral 7B (free)",
+                "name": "Kimi K2 (free)",
                 "provider": "openrouter",
                 "api_url": "https://openrouter.ai/api/v1",
                 "api_key_env": "OPENROUTER_API_KEY",
-                "model_id": "mistralai/mistral-7b-instruct:free",
+                "model_id": "moonshotai/kimi-k2:free",
             },
             {
-                "name": "Phi-3 Mini 128K (free)",
+                "name": "Nvidia Nemotron 9B (free)",
                 "provider": "openrouter",
                 "api_url": "https://openrouter.ai/api/v1",
                 "api_key_env": "OPENROUTER_API_KEY",
-                "model_id": "microsoft/phi-3-mini-128k-instruct:free",
+                "model_id": "nvidia/nemotron-nano-9b-v2:free",
             },
             {
-                "name": "Phi-3 Medium 128K (free)",
+                "name": "Dolphin Mistral 24B (free)",
                 "provider": "openrouter",
                 "api_url": "https://openrouter.ai/api/v1",
                 "api_key_env": "OPENROUTER_API_KEY",
-                "model_id": "microsoft/phi-3-medium-128k-instruct:free",
-            },
-            {
-                "name": "DeepSeek R1 Distill Qwen 32B (free)",
-                "provider": "openrouter",
-                "api_url": "https://openrouter.ai/api/v1",
-                "api_key_env": "OPENROUTER_API_KEY",
-                "model_id": "deepseek/deepseek-r1-distill-qwen-32b:free",
-            },
-            {
-                "name": "DeepSeek R1 Distill Llama 70B (free)",
-                "provider": "openrouter",
-                "api_url": "https://openrouter.ai/api/v1",
-                "api_key_env": "OPENROUTER_API_KEY",
-                "model_id": "deepseek/deepseek-r1-distill-llama-70b:free",
+                "model_id": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
             },
         ]
 
@@ -285,4 +312,182 @@ class ModelManager:
                     model_id=model["model_id"],
                     is_active=False,  # По умолчанию неактивны
                 )
+
+
+class PromptImprover:
+    """AI-ассистент для улучшения промптов."""
+
+    # Модели OpenRouter, рекомендуемые для улучшения промптов (бесплатные, актуальные)
+    RECOMMENDED_MODELS = [
+        ("DeepSeek R1", "deepseek/deepseek-r1-0528:free"),
+        ("Qwen3 4B", "qwen/qwen3-4b:free"),
+        ("Qwen3 Coder", "qwen/qwen3-coder:free"),
+        ("Google Gemma 3n E4B", "google/gemma-3n-e4b-it:free"),
+        ("Google Gemma 3n E2B", "google/gemma-3n-e2b-it:free"),
+        ("Mistral Devstral", "mistralai/devstral-2512:free"),
+        ("Kimi K2", "moonshotai/kimi-k2:free"),
+        ("Nvidia Nemotron 9B", "nvidia/nemotron-nano-9b-v2:free"),
+    ]
+
+    def __init__(self, db: Database):
+        """
+        Инициализация улучшателя промптов.
+
+        Args:
+            db: Экземпляр базы данных для получения настроек.
+        """
+        self.db = db
+
+    def get_selected_model(self) -> str:
+        """Получить выбранную модель для улучшения."""
+        return self.db.get_setting(
+            "improve_model", 
+            self.RECOMMENDED_MODELS[0][1]  # По умолчанию первая модель
+        )
+
+    def set_selected_model(self, model_id: str) -> None:
+        """Установить модель для улучшения."""
+        self.db.set_setting("improve_model", model_id)
+
+    async def improve_async(self, original_prompt: str, timeout: int = 90) -> ImprovedPrompt:
+        """
+        Улучшить промпт асинхронно.
+
+        Args:
+            original_prompt: Исходный промпт пользователя.
+            timeout: Таймаут запроса в секундах.
+
+        Returns:
+            ImprovedPrompt с улучшенной версией и альтернативами.
+        """
+        model_id = self.get_selected_model()
+        
+        # Создаём клиент OpenRouter
+        client = OpenRouterClient(
+            api_url="https://openrouter.ai/api/v1",
+            api_key_env="OPENROUTER_API_KEY",
+            model_id=model_id,
+            timeout=timeout,
+        )
+
+        if not client.is_configured():
+            return ImprovedPrompt(
+                original=original_prompt,
+                improved="",
+                success=False,
+                error="API-ключ OPENROUTER_API_KEY не настроен",
+            )
+
+        # Формируем запрос с системным промптом
+        full_prompt = f"""{IMPROVE_SYSTEM_PROMPT}
+
+ПРОМПТ ПОЛЬЗОВАТЕЛЯ:
+{original_prompt}
+
+Проанализируй и предложи улучшенные версии."""
+
+        response = await client.send_message(full_prompt)
+
+        if not response.success:
+            return ImprovedPrompt(
+                original=original_prompt,
+                improved="",
+                success=False,
+                error=response.error,
+            )
+
+        # Проверяем, что ответ не пустой
+        if not response.content or not response.content.strip():
+            return ImprovedPrompt(
+                original=original_prompt,
+                improved="",
+                success=False,
+                error="AI вернул пустой ответ. Попробуйте другую модель.",
+            )
+
+        # Парсим ответ
+        return self._parse_response(original_prompt, response.content)
+
+    def improve_sync(self, original_prompt: str, timeout: int = 90) -> ImprovedPrompt:
+        """
+        Синхронная обёртка для improve_async.
+
+        Args:
+            original_prompt: Исходный промпт пользователя.
+            timeout: Таймаут запроса в секундах.
+
+        Returns:
+            ImprovedPrompt с улучшенной версией и альтернативами.
+        """
+        return asyncio.run(self.improve_async(original_prompt, timeout))
+
+    def _parse_response(self, original: str, response_text: str) -> ImprovedPrompt:
+        """
+        Распарсить ответ AI в структурированный формат.
+
+        Args:
+            original: Оригинальный промпт.
+            response_text: Текст ответа от AI.
+
+        Returns:
+            ImprovedPrompt со всеми вариантами.
+        """
+        # Если ответ пустой — ошибка
+        if not response_text or not response_text.strip():
+            return ImprovedPrompt(
+                original=original,
+                improved="",
+                success=False,
+                error="Получен пустой ответ от AI",
+            )
+
+        improved = ""
+        alternatives = []
+
+        # Паттерны для поиска улучшенного промпта (разные форматы)
+        improved_patterns = [
+            r"##\s*УЛУЧШЕННЫЙ ПРОМПТ[:\s]*\n(.*?)(?=##\s*АЛЬТЕРНАТИВА|\Z)",
+            r"\*\*УЛУЧШЕННЫЙ ПРОМПТ[:\s]*\*\*\s*\n(.*?)(?=\*\*АЛЬТЕРНАТИВА|\Z)",
+            r"(?:^|\n)1[\.\)]\s*(.*?)(?=\n2[\.\)]|\Z)",  # Нумерованный список
+            r"Улучшенн[аы][яй]?\s*(?:версия|промпт)[:\s]*(.*?)(?=Альтернатив|\Z)",
+        ]
+
+        for pattern in improved_patterns:
+            match = re.search(pattern, response_text, re.DOTALL | re.IGNORECASE)
+            if match:
+                improved = match.group(1).strip()
+                if improved:
+                    break
+
+        # Паттерны для альтернатив
+        alt_patterns = [
+            r"##\s*АЛЬТЕРНАТИВА\s*\d+[^#\n]*\n(.*?)(?=##\s*АЛЬТЕРНАТИВА|\Z)",
+            r"\*\*АЛЬТЕРНАТИВА\s*\d+[^*\n]*\*\*\s*\n(.*?)(?=\*\*АЛЬТЕРНАТИВА|\Z)",
+            r"(?:^|\n)[2-4][\.\)]\s*(.*?)(?=\n[3-5][\.\)]|\Z)",  # Нумерованный список 2-4
+        ]
+
+        for pattern in alt_patterns:
+            matches = re.findall(pattern, response_text, re.DOTALL | re.IGNORECASE)
+            for match in matches:
+                alt_text = match.strip()
+                if alt_text and len(alt_text) > 10:  # Минимальная длина
+                    alternatives.append(alt_text)
+            if alternatives:
+                break
+
+        # Если парсинг не удался — используем весь ответ как улучшенную версию
+        if not improved:
+            # Убираем служебные заголовки и берём основной текст
+            cleaned = response_text.strip()
+            # Убираем маркеры типа "## УЛУЧШЕННЫЙ ПРОМПТ" если они есть
+            cleaned = re.sub(r'^#+\s*.*?\n', '', cleaned, flags=re.MULTILINE)
+            cleaned = re.sub(r'^\*\*.*?\*\*\s*\n', '', cleaned, flags=re.MULTILINE)
+            improved = cleaned.strip() if cleaned.strip() else response_text.strip()
+
+        return ImprovedPrompt(
+            original=original,
+            improved=improved,
+            alternatives=alternatives,
+            success=True,
+        )
 

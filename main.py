@@ -1541,7 +1541,7 @@ class AboutDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("О программе")
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
-        self.setFixedSize(450, 400)
+        self.setFixedSize(520, 450)
         self.setup_ui()
 
     def setup_ui(self):
@@ -1555,11 +1555,19 @@ class AboutDialog(QDialog):
         # Иконка
         icon_label = QLabel()
         import os
-        icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app.ico")
+        # Пробуем загрузить PNG версию для лучшего качества
+        png_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app_icon.png")
+        ico_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app.ico")
+        icon_path = png_path if os.path.exists(png_path) else ico_path
+        
         if os.path.exists(icon_path):
             from PyQt5.QtGui import QPixmap
-            pixmap = QPixmap(icon_path).scaled(64, 64, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            icon_label.setPixmap(pixmap)
+            # Загружаем иконку в размере 128x128 для максимального качества
+            pixmap = QPixmap(icon_path)
+            if not pixmap.isNull():
+                pixmap = pixmap.scaled(128, 128, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                icon_label.setPixmap(pixmap)
+                icon_label.setFixedSize(128, 128)
         header_layout.addWidget(icon_label)
         
         # Название и версия

@@ -114,3 +114,27 @@ if __name__ == "__main__":
     icon_path = os.path.join(script_dir, "app.ico")
     
     create_chatlist_icon(icon_path)
+    
+    # Создаём также PNG версию для использования в GUI
+    png_path = os.path.join(script_dir, "app_icon.png")
+    img_128 = Image.new('RGBA', (128, 128), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img_128)
+    
+    # Рисуем голубой круг
+    padding = int(128 * 0.05)
+    circle_radius = 128 // 2 - padding
+    draw.ellipse([
+        64 - circle_radius,
+        64 - circle_radius,
+        64 + circle_radius,
+        64 + circle_radius
+    ], fill=(100, 180, 255))
+    
+    # Рисуем красную звезду
+    outer_radius = int(circle_radius * 0.70)
+    inner_radius = int(outer_radius * 0.38)
+    draw_star(draw, 64, 64, outer_radius, inner_radius, points=5, 
+              color=(220, 50, 50), rotation=-90)
+    
+    img_128.save(png_path, 'PNG')
+    print(f"PNG иконка создана: {png_path}")

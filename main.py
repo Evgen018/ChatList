@@ -1574,8 +1574,97 @@ class HistoryTab(QWidget):
         QMessageBox.information(self, "Успех", f"Экспортировано в {file_path}")
 
 
+class AboutDialog(QDialog):
+    """Диалог «О программе»."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("О программе")
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setFixedSize(450, 400)
+        self.setup_ui()
+
+    def setup_ui(self):
+        layout = QVBoxLayout(self)
+        layout.setSpacing(15)
+        layout.setContentsMargins(30, 30, 30, 30)
+
+        # Иконка и название
+        header_layout = QHBoxLayout()
+        
+        # Иконка
+        icon_label = QLabel()
+        import os
+        icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app.ico")
+        if os.path.exists(icon_path):
+            from PyQt5.QtGui import QPixmap
+            pixmap = QPixmap(icon_path).scaled(64, 64, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            icon_label.setPixmap(pixmap)
+        header_layout.addWidget(icon_label)
+        
+        # Название и версия
+        title_layout = QVBoxLayout()
+        app_name = QLabel("ChatList")
+        app_name.setStyleSheet("font-size: 24px; font-weight: bold; color: #2c3e50;")
+        title_layout.addWidget(app_name)
+        
+        version = QLabel("Версия 1.0.0")
+        version.setStyleSheet("font-size: 14px; color: #7f8c8d;")
+        title_layout.addWidget(version)
+        header_layout.addLayout(title_layout)
+        header_layout.addStretch()
+        
+        layout.addLayout(header_layout)
+
+        # Описание
+        description = QLabel(
+            "Приложение для сравнения ответов нейросетей.\n\n"
+            "Отправляйте один промпт в несколько AI-моделей\n"
+            "и сравнивайте их ответы в удобной таблице.\n\n"
+            "Поддерживаются: OpenAI, Anthropic, Google,\n"
+            "OpenRouter и другие OpenAI-совместимые API."
+        )
+        description.setStyleSheet("font-size: 13px; color: #34495e; line-height: 1.5;")
+        description.setWordWrap(True)
+        layout.addWidget(description)
+
+        # Разделитель
+        separator = QFrame()
+        separator.setFrameShape(QFrame.HLine)
+        separator.setStyleSheet("background-color: #dee2e6;")
+        layout.addWidget(separator)
+
+        # Автор
+        author = QLabel("© 2025-2026 ChatList")
+        author.setStyleSheet("font-size: 12px; color: #95a5a6;")
+        layout.addWidget(author)
+
+        layout.addStretch()
+
+        # Кнопка закрыть
+        close_btn = QPushButton("Закрыть")
+        close_btn.clicked.connect(self.accept)
+        close_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #3498db;
+                color: white;
+                border: none;
+                padding: 10px 30px;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background-color: #2980b9;
+            }
+        """)
+        layout.addWidget(close_btn, alignment=Qt.AlignCenter)
+
+
 class SettingsTab(QWidget):
     """Вкладка «Настройки»."""
+
+    # Сигнал об изменении настроек оформления
+    appearance_changed = pyqtSignal()
 
     def __init__(self, db: Database, parent=None):
         super().__init__(parent)
@@ -1585,19 +1674,62 @@ class SettingsTab(QWidget):
 
     def setup_ui(self):
         layout = QVBoxLayout(self)
-        layout.setSpacing(20)
+        layout.setSpacing(15)
 
         # Заголовок
         title = QLabel("Настройки")
         title.setStyleSheet("font-size: 18px; font-weight: bold; color: #2c3e50;")
         layout.addWidget(title)
 
+        # === Оформление ===
+        appearance_title = QLabel("🎨 Оформление")
+        appearance_title.setStyleSheet("font-size: 16px; font-weight: bold; color: #9b59b6;")
+        layout.addWidget(appearance_title)
+
+        # Тема
+        theme_layout = QHBoxLayout()
+        theme_label = QLabel("Тема:")
+        self.theme_combo = QComboBox()
+        self.theme_combo.addItem("☀️ Светлая", "light")
+        self.theme_combo.addItem("🌙 Тёмная", "dark")
+        self.theme_combo.setMinimumWidth(200)
+        theme_layout.addWidget(theme_label)
+        theme_layout.addWidget(self.theme_combo)
+        theme_layout.addStretch()
+        layout.addLayout(theme_layout)
+
+        # Размер шрифта
+        font_layout = QHBoxLayout()
+        font_label = QLabel("Размер шрифта:")
+        self.font_spin = QSpinBox()
+        self.font_spin.setRange(8, 24)
+        self.font_spin.setValue(10)
+        self.font_spin.setSuffix(" пт")
+        self.font_spin.setMinimumWidth(100)
+        font_layout.addWidget(font_label)
+        font_layout.addWidget(self.font_spin)
+        font_layout.addStretch()
+        layout.addLayout(font_layout)
+
+        # Разделитель
+        separator1 = QFrame()
+        separator1.setFrameShape(QFrame.HLine)
+        separator1.setStyleSheet("background-color: #dee2e6;")
+        layout.addWidget(separator1)
+
+        # === Запросы ===
+        requests_title = QLabel("🌐 Запросы к API")
+        requests_title.setStyleSheet("font-size: 16px; font-weight: bold; color: #3498db;")
+        layout.addWidget(requests_title)
+
         # Таймаут
         timeout_layout = QHBoxLayout()
-        timeout_label = QLabel("Таймаут запроса (сек):")
+        timeout_label = QLabel("Таймаут запроса:")
         self.timeout_spin = QSpinBox()
         self.timeout_spin.setRange(10, 300)
         self.timeout_spin.setValue(60)
+        self.timeout_spin.setSuffix(" сек")
+        self.timeout_spin.setMinimumWidth(100)
         timeout_layout.addWidget(timeout_label)
         timeout_layout.addWidget(self.timeout_spin)
         timeout_layout.addStretch()
@@ -1609,20 +1741,21 @@ class SettingsTab(QWidget):
         self.tokens_spin = QSpinBox()
         self.tokens_spin.setRange(100, 16000)
         self.tokens_spin.setValue(4096)
+        self.tokens_spin.setMinimumWidth(100)
         tokens_layout.addWidget(tokens_label)
         tokens_layout.addWidget(self.tokens_spin)
         tokens_layout.addStretch()
         layout.addLayout(tokens_layout)
 
         # Разделитель
-        separator = QFrame()
-        separator.setFrameShape(QFrame.HLine)
-        separator.setStyleSheet("background-color: #dee2e6;")
-        layout.addWidget(separator)
+        separator2 = QFrame()
+        separator2.setFrameShape(QFrame.HLine)
+        separator2.setStyleSheet("background-color: #dee2e6;")
+        layout.addWidget(separator2)
 
-        # Настройки AI-ассистента
+        # === AI-ассистент ===
         ai_title = QLabel("✨ AI-ассистент для улучшения промптов")
-        ai_title.setStyleSheet("font-size: 16px; font-weight: bold; color: #9b59b6;")
+        ai_title.setStyleSheet("font-size: 16px; font-weight: bold; color: #27ae60;")
         layout.addWidget(ai_title)
 
         # Выбор модели для улучшения
@@ -1645,6 +1778,15 @@ class SettingsTab(QWidget):
         hint_label.setStyleSheet("color: #7f8c8d; font-style: italic;")
         layout.addWidget(hint_label)
 
+        # Разделитель
+        separator3 = QFrame()
+        separator3.setFrameShape(QFrame.HLine)
+        separator3.setStyleSheet("background-color: #dee2e6;")
+        layout.addWidget(separator3)
+
+        # Кнопки
+        buttons_layout = QHBoxLayout()
+
         # Кнопка сохранения
         save_btn = QPushButton("💾 Сохранить настройки")
         save_btn.clicked.connect(self.save_settings)
@@ -1660,8 +1802,28 @@ class SettingsTab(QWidget):
                 background-color: #219a52;
             }
         """)
-        layout.addWidget(save_btn)
+        buttons_layout.addWidget(save_btn)
 
+        buttons_layout.addStretch()
+
+        # Кнопка "О программе"
+        about_btn = QPushButton("ℹ️ О программе")
+        about_btn.clicked.connect(self.show_about)
+        about_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #3498db;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: #2980b9;
+            }
+        """)
+        buttons_layout.addWidget(about_btn)
+
+        layout.addLayout(buttons_layout)
         layout.addStretch()
 
     def load_settings(self):
@@ -1672,9 +1834,17 @@ class SettingsTab(QWidget):
             "improve_model", 
             PromptImprover.RECOMMENDED_MODELS[0][1]
         )
+        theme = self.db.get_setting("theme", "light")
+        font_size = self.db.get_setting("font_size", "10")
 
         self.timeout_spin.setValue(int(timeout))
         self.tokens_spin.setValue(int(max_tokens))
+        self.font_spin.setValue(int(font_size))
+        
+        # Установить тему
+        theme_index = self.theme_combo.findData(theme)
+        if theme_index >= 0:
+            self.theme_combo.setCurrentIndex(theme_index)
         
         # Установить выбранную модель
         index = self.improve_model_combo.findData(improve_model)
@@ -1686,11 +1856,156 @@ class SettingsTab(QWidget):
         self.db.set_setting("request_timeout", str(self.timeout_spin.value()))
         self.db.set_setting("max_tokens", str(self.tokens_spin.value()))
         self.db.set_setting("improve_model", self.improve_model_combo.currentData())
+        self.db.set_setting("theme", self.theme_combo.currentData())
+        self.db.set_setting("font_size", str(self.font_spin.value()))
+        
+        # Сигнал для применения оформления
+        self.appearance_changed.emit()
+        
         QMessageBox.information(self, "Успех", "Настройки сохранены")
+
+    def show_about(self):
+        """Показать окно О программе."""
+        dialog = AboutDialog(self)
+        dialog.exec_()
 
 
 class MainWindow(QMainWindow):
     """Главное окно приложения."""
+
+    # Стили для светлой темы
+    LIGHT_THEME = """
+        QMainWindow, QWidget {
+            background-color: #f5f6fa;
+            color: #2c3e50;
+        }
+        QTabWidget::pane {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            background: white;
+        }
+        QTabBar::tab {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px 20px;
+            margin-right: 2px;
+            color: #2c3e50;
+        }
+        QTabBar::tab:selected {
+            background: white;
+            border-bottom: none;
+        }
+        QTableWidget {
+            background-color: white;
+            alternate-background-color: #f8f9fa;
+            gridline-color: #dee2e6;
+        }
+        QTableWidget::item {
+            padding: 5px;
+        }
+        QHeaderView::section {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 5px;
+        }
+        QLineEdit, QTextEdit, QSpinBox, QComboBox {
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 5px;
+        }
+        QLineEdit:focus, QTextEdit:focus {
+            border-color: #3498db;
+        }
+    """
+
+    # Стили для тёмной темы
+    DARK_THEME = """
+        QMainWindow, QWidget {
+            background-color: #1a1a2e;
+            color: #eaeaea;
+        }
+        QTabWidget::pane {
+            border: 1px solid #3a3a5c;
+            border-radius: 5px;
+            background: #16213e;
+        }
+        QTabBar::tab {
+            background: #1a1a2e;
+            border: 1px solid #3a3a5c;
+            padding: 10px 20px;
+            margin-right: 2px;
+            color: #eaeaea;
+        }
+        QTabBar::tab:selected {
+            background: #16213e;
+            border-bottom: none;
+        }
+        QTableWidget {
+            background-color: #16213e;
+            alternate-background-color: #1a1a2e;
+            gridline-color: #3a3a5c;
+            color: #eaeaea;
+        }
+        QTableWidget::item {
+            padding: 5px;
+            color: #eaeaea;
+        }
+        QHeaderView::section {
+            background-color: #1a1a2e;
+            border: 1px solid #3a3a5c;
+            padding: 5px;
+            color: #eaeaea;
+        }
+        QLineEdit, QTextEdit, QSpinBox, QComboBox {
+            background-color: #16213e;
+            border: 1px solid #3a3a5c;
+            border-radius: 4px;
+            padding: 5px;
+            color: #eaeaea;
+        }
+        QLineEdit:focus, QTextEdit:focus {
+            border-color: #e94560;
+        }
+        QLabel {
+            color: #eaeaea;
+        }
+        QCheckBox {
+            color: #eaeaea;
+        }
+        QGroupBox {
+            color: #eaeaea;
+        }
+        QMessageBox {
+            background-color: #1a1a2e;
+        }
+        QMessageBox QLabel {
+            color: #eaeaea;
+        }
+        QPushButton {
+            background-color: #e94560;
+            color: white;
+        }
+        QPushButton:hover {
+            background-color: #c73e54;
+        }
+        QScrollBar:vertical {
+            background: #1a1a2e;
+            width: 12px;
+        }
+        QScrollBar::handle:vertical {
+            background: #3a3a5c;
+            border-radius: 6px;
+        }
+        QScrollBar:horizontal {
+            background: #1a1a2e;
+            height: 12px;
+        }
+        QScrollBar::handle:horizontal {
+            background: #3a3a5c;
+            border-radius: 6px;
+        }
+    """
 
     def __init__(self):
         super().__init__()
@@ -1713,6 +2028,9 @@ class MainWindow(QMainWindow):
 
         self.setup_ui()
         self.setup_connections()
+        
+        # Применить сохранённые настройки оформления
+        self.apply_appearance()
 
     def setup_ui(self):
         """Настройка интерфейса."""
@@ -1763,6 +2081,26 @@ class MainWindow(QMainWindow):
         """Настройка сигналов и слотов."""
         self.request_tab.request_sent.connect(self.send_requests)
         self.request_tab.improve_requested.connect(self.improve_prompt)
+        self.settings_tab.appearance_changed.connect(self.apply_appearance)
+
+    def apply_appearance(self):
+        """Применить настройки оформления (тема и размер шрифта)."""
+        # Получить настройки
+        theme = self.db.get_setting("theme", "light")
+        font_size = int(self.db.get_setting("font_size", "10"))
+        
+        # Применить тему
+        if theme == "dark":
+            self.setStyleSheet(self.DARK_THEME)
+        else:
+            self.setStyleSheet(self.LIGHT_THEME)
+        
+        # Применить размер шрифта
+        app = QApplication.instance()
+        if app:
+            font = app.font()
+            font.setPointSize(font_size)
+            app.setFont(font)
 
     def on_tab_changed(self, index: int):
         """Обработка переключения вкладок."""

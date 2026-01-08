@@ -106,15 +106,6 @@ ChatList/
 └── PROJECT.md        # Спецификация проекта
 ```
 
-## Сборка exe-файла
-
-```powershell
-pip install pyinstaller
-pyinstaller --onefile --windowed --name "ChatList" main.py
-```
-
-Исполняемый файл будет создан в папке `dist/`.
-
 ## Логирование
 
 Логи сохраняются в папке `logs/` с разбивкой по дням:

@@ -29,7 +29,7 @@ from PyQt5.QtWidgets import (
     QTextBrowser,
 )
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QIcon
 
 
 class MarkdownViewerDialog(QDialog):
@@ -1696,6 +1696,12 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("ChatList — Сравнение нейросетей")
         self.setMinimumSize(1000, 700)
+        
+        # Установка иконки окна
+        import os
+        icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app.ico")
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
 
         # Инициализация компонентов
         self.db = Database()

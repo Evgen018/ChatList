@@ -330,7 +330,7 @@ class RequestTab(QWidget):
         # Заголовок и CRUD кнопки
         header_layout = QHBoxLayout()
         title = QLabel("Введите промпт")
-        title.setStyleSheet("font-size: 18px; font-weight: bold; color: #2c3e50;")
+        title.setStyleSheet("font-size: 18px; font-weight: bold;")
         header_layout.addWidget(title)
         header_layout.addStretch()
 
@@ -397,17 +397,7 @@ class RequestTab(QWidget):
         self.prompt_edit = QTextEdit()
         self.prompt_edit.setPlaceholderText("Введите ваш запрос здесь...")
         self.prompt_edit.setMinimumHeight(150)
-        self.prompt_edit.setStyleSheet("""
-            QTextEdit {
-                border: 2px solid #bdc3c7;
-                border-radius: 8px;
-                padding: 10px;
-                font-size: 14px;
-            }
-            QTextEdit:focus {
-                border-color: #3498db;
-            }
-        """)
+        # Стиль берётся из темы
         layout.addWidget(self.prompt_edit)
 
         # Теги
@@ -491,22 +481,11 @@ class RequestTab(QWidget):
         self.progress = QProgressBar()
         self.progress.setVisible(False)
         self.progress.setTextVisible(False)
-        self.progress.setStyleSheet("""
-            QProgressBar {
-                border: none;
-                border-radius: 5px;
-                background-color: #ecf0f1;
-                height: 10px;
-            }
-            QProgressBar::chunk {
-                background-color: #3498db;
-                border-radius: 5px;
-            }
-        """)
+        # Стиль берётся из темы
         layout.addWidget(self.progress)
 
         self.status_label = QLabel("")
-        self.status_label.setStyleSheet("color: #7f8c8d;")
+        # Цвет берётся из темы
         layout.addWidget(self.status_label)
 
         layout.addStretch()
@@ -633,7 +612,7 @@ class ResultsTab(QWidget):
         # Заголовок и CRUD кнопки
         header_layout = QHBoxLayout()
         title = QLabel("Результаты запроса")
-        title.setStyleSheet("font-size: 18px; font-weight: bold; color: #2c3e50;")
+        title.setStyleSheet("font-size: 18px; font-weight: bold;")
         header_layout.addWidget(title)
         header_layout.addStretch()
 
@@ -684,12 +663,7 @@ class ResultsTab(QWidget):
         # Текущий промпт
         self.prompt_label = QLabel("")
         self.prompt_label.setWordWrap(True)
-        self.prompt_label.setStyleSheet("""
-            background-color: #f8f9fa;
-            padding: 10px;
-            border-radius: 5px;
-            color: #495057;
-        """)
+        # Стиль берётся из темы
         layout.addWidget(self.prompt_label)
 
         # Таблица результатов
@@ -707,15 +681,7 @@ class ResultsTab(QWidget):
         self.results_table.verticalHeader().setDefaultSectionSize(120)  # Высота строк
         self.results_table.setSelectionBehavior(QTableWidget.SelectRows)
         self.results_table.doubleClicked.connect(self.view_selected_result)
-        self.results_table.setStyleSheet("""
-            QTableWidget {
-                border: 1px solid #dee2e6;
-                border-radius: 5px;
-            }
-            QTableWidget::item {
-                padding: 10px;
-            }
-        """)
+        # Стили таблицы берутся из темы
         layout.addWidget(self.results_table)
 
         # Кнопки
@@ -890,7 +856,7 @@ class ModelsTab(QWidget):
         # Заголовок и CRUD кнопки
         header_layout = QHBoxLayout()
         title = QLabel("Управление моделями")
-        title.setStyleSheet("font-size: 18px; font-weight: bold; color: #2c3e50;")
+        title.setStyleSheet("font-size: 18px; font-weight: bold;")
         header_layout.addWidget(title)
         header_layout.addStretch()
 
@@ -961,17 +927,11 @@ class ModelsTab(QWidget):
 
         # Форма добавления
         form_frame = QFrame()
-        form_frame.setStyleSheet("""
-            QFrame {
-                background-color: #f8f9fa;
-                border-radius: 8px;
-                padding: 10px;
-            }
-        """)
+        # Стили берутся из темы
         form_layout = QVBoxLayout(form_frame)
 
         form_title = QLabel("Добавить модель")
-        form_title.setStyleSheet("font-weight: bold;")
+        # Стиль берётся из темы
         form_layout.addWidget(form_title)
 
         row1 = QHBoxLayout()
@@ -1250,7 +1210,7 @@ class HistoryTab(QWidget):
         # Заголовок и поиск
         header_layout = QHBoxLayout()
         title = QLabel("История результатов")
-        title.setStyleSheet("font-size: 18px; font-weight: bold; color: #2c3e50;")
+        title.setStyleSheet("font-size: 18px; font-weight: bold;")
         header_layout.addWidget(title)
 
         header_layout.addStretch()
@@ -1678,7 +1638,7 @@ class SettingsTab(QWidget):
 
         # Заголовок
         title = QLabel("Настройки")
-        title.setStyleSheet("font-size: 18px; font-weight: bold; color: #2c3e50;")
+        title.setStyleSheet("font-size: 18px; font-weight: bold;")
         layout.addWidget(title)
 
         # === Оформление ===
@@ -1775,7 +1735,7 @@ class SettingsTab(QWidget):
 
         # Подсказка
         hint_label = QLabel("💡 Модель используется для анализа и улучшения ваших промптов")
-        hint_label.setStyleSheet("color: #7f8c8d; font-style: italic;")
+        hint_label.setStyleSheet("font-style: italic;")
         layout.addWidget(hint_label)
 
         # Разделитель
@@ -1917,6 +1877,21 @@ class MainWindow(QMainWindow):
         QLineEdit:focus, QTextEdit:focus {
             border-color: #3498db;
         }
+        QFrame {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
+        QProgressBar {
+            border: none;
+            border-radius: 5px;
+            background-color: #ecf0f1;
+            height: 10px;
+        }
+        QProgressBar::chunk {
+            background-color: #3498db;
+            border-radius: 5px;
+        }
     """
 
     # Стили для тёмной темы
@@ -1931,15 +1906,16 @@ class MainWindow(QMainWindow):
             background: #16213e;
         }
         QTabBar::tab {
-            background: #1a1a2e;
+            background-color: #16213e;
             border: 1px solid #3a3a5c;
             padding: 10px 20px;
             margin-right: 2px;
             color: #eaeaea;
         }
         QTabBar::tab:selected {
-            background: #16213e;
-            border-bottom: none;
+            background-color: #16213e;
+            border-bottom: 2px solid #4fc3f7;
+            color: #eaeaea;
         }
         QTableWidget {
             background-color: #16213e;
@@ -2005,6 +1981,21 @@ class MainWindow(QMainWindow):
             background: #3a3a5c;
             border-radius: 6px;
         }
+        QFrame {
+            background-color: #1a1a2e;
+            border: 1px solid #3a3a5c;
+            border-radius: 8px;
+        }
+        QProgressBar {
+            border: none;
+            border-radius: 5px;
+            background-color: #3a3a5c;
+            height: 10px;
+        }
+        QProgressBar::chunk {
+            background-color: #e94560;
+            border-radius: 5px;
+        }
     """
 
     def __init__(self):
@@ -2041,23 +2032,7 @@ class MainWindow(QMainWindow):
 
         # Вкладки
         self.tabs = QTabWidget()
-        self.tabs.setStyleSheet("""
-            QTabWidget::pane {
-                border: 1px solid #dee2e6;
-                border-radius: 5px;
-                background: white;
-            }
-            QTabBar::tab {
-                background: #f8f9fa;
-                border: 1px solid #dee2e6;
-                padding: 10px 20px;
-                margin-right: 2px;
-            }
-            QTabBar::tab:selected {
-                background: white;
-                border-bottom: none;
-            }
-        """)
+        # Стили вкладок задаются через тему (LIGHT_THEME / DARK_THEME)
 
         # Создание вкладок
         self.request_tab = RequestTab(self.db, self.model_manager)

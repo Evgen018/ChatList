@@ -1594,10 +1594,15 @@ class AboutDialog(QDialog):
         separator.setStyleSheet("background-color: #dee2e6;")
         layout.addWidget(separator)
 
-        # Автор
+        # Автор и ссылки
         author = QLabel("© 2025-2026 ChatList")
         author.setStyleSheet("font-size: 12px; color: #95a5a6;")
         layout.addWidget(author)
+
+        github_link = QLabel('<a href="https://github.com/Evgen018/ChatList">GitHub: Evgen018/ChatList</a>')
+        github_link.setOpenExternalLinks(True)
+        github_link.setStyleSheet("font-size: 12px;")
+        layout.addWidget(github_link)
 
         layout.addStretch()
 

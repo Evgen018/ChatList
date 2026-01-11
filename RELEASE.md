@@ -188,7 +188,7 @@ git push origin v1.0.0
 
 ```powershell
 # Скопируйте иконку для сайта
-Copy-Item app_icon.png docs\logo.png
+Copy-Item app_ai.ico docs\logo.png
 
 # Добавьте скриншоты (если есть)
 # New-Item -ItemType Directory -Path docs\screenshots -Force

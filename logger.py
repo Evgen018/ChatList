@@ -5,6 +5,7 @@
 import logging
 from datetime import datetime
 from pathlib import Path
+from version import __version__
 
 
 def setup_logger(log_dir: str = "logs") -> logging.Logger:
@@ -92,7 +93,7 @@ def log_error(message: str, exception: Exception = None) -> None:
 def log_app_start() -> None:
     """Логировать запуск приложения."""
     logger.info("=" * 50)
-    logger.info("ChatList запущен")
+    logger.info(f"ChatList v{__version__} запущен")
     logger.info("=" * 50)
 
 

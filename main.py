@@ -260,6 +260,7 @@ class PromptImproverDialog(QDialog):
 from db import Database
 from models import ModelManager, ResultsStore, PromptImprover, ImprovedPrompt
 from network import send_to_models_sync
+from version import __version__
 from logger import (
     log_request,
     log_response,
@@ -1576,7 +1577,7 @@ class AboutDialog(QDialog):
         app_name.setStyleSheet("font-size: 24px; font-weight: bold; color: #2c3e50;")
         title_layout.addWidget(app_name)
         
-        version = QLabel("Версия 1.0.0")
+        version = QLabel(f"Версия {__version__}")
         version.setStyleSheet("font-size: 14px; color: #7f8c8d;")
         title_layout.addWidget(version)
         header_layout.addLayout(title_layout)

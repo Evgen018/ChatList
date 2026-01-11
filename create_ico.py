@@ -130,8 +130,8 @@ if __name__ == "__main__":
         64 + circle_radius
     ], fill=(100, 180, 255))
     
-    # Рисуем красную звезду
-    outer_radius = int(circle_radius * 0.70)
+    # Рисуем красную звезду (лучи касаются края круга)
+    outer_radius = int(circle_radius * 0.95)
     inner_radius = int(outer_radius * 0.38)
     draw_star(draw, 64, 64, outer_radius, inner_radius, points=5, 
               color=(220, 50, 50), rotation=-90)

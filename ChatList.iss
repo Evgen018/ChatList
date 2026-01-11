@@ -2,10 +2,10 @@
 ; Version is taken from version.py
 
 #define MyAppName "ChatList"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.2"
 #define MyAppPublisher "ChatList Team"
 #define MyAppURL "https://github.com/Evgen018/ChatList"
-#define MyAppExeName "ChatList-v1.0.0.exe"
+#define MyAppExeName "ChatList-v1.0.2.exe"
 
 [Setup]
 ; Application Information
@@ -22,7 +22,7 @@ DisableProgramGroupPage=yes
 LicenseFile=LICENSE
 OutputDir=dist
 OutputBaseFilename=ChatList-v{#MyAppVersion}-Setup
-SetupIconFile=app.ico
+SetupIconFile=app_ai.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -44,7 +44,7 @@ Source: "dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 ; Database (install only if doesn't exist)
 Source: "chatlist.db"; DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
 ; Icons
-Source: "app.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "app_ai.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "app_icon.png"; DestDir: "{app}"; Flags: ignoreversion
 ; Documentation
 Source: "README.md"; DestDir: "{app}"; Flags: ignoreversion

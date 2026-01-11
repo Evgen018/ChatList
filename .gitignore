@@ -67,6 +67,11 @@ chatlist.db
 # ChatList logs
 logs/
 
+# PyInstaller build
+build/
+dist/
+*.spec
+
 # Flask stuff:
 instance/
 .webassets-cache
@@ -211,3 +216,7 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Inno Setup
+Output/
+*-Setup.exe

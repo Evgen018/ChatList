@@ -159,8 +159,10 @@ git push origin v1.0.0
 3. **Загрузите файлы:**
    
    Перетащите следующие файлы в раздел **"Attach binaries"**:
-   - `dist\ChatList-v1.0.0-Setup.exe` (инсталлятор)
-   - `dist\ChatList-v1.0.0.exe` (portable версия)
+   - `dist\ChatList-v1.0.0-Setup.exe` (инсталлятор, ~43 МБ)
+   - `dist\ChatList-v1.0.0.exe` (portable версия, ~41 МБ)
+   - `dist\ChatList-v1.0.0-Source.zip` (исходный код ZIP, ~93 КБ)
+   - `dist\ChatList-v1.0.0-Source.tar.gz` (исходный код TAR.GZ, ~78 КБ)
    - `LICENSE` (файл лицензии)
    - `README.md` (документация)
 

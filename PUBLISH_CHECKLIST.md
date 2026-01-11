@@ -44,8 +44,10 @@
 
 ### 📦 Готовые файлы в `dist/`
 
-- ✅ `dist/ChatList-v1.0.0.exe` - Portable версия (~43 МБ)
+- ✅ `dist/ChatList-v1.0.0.exe` - Portable версия (~41 МБ)
 - ✅ `dist/ChatList-v1.0.0-Setup.exe` - Инсталлятор (~43 МБ)
+- ✅ `dist/ChatList-v1.0.0-Source.zip` - Исходный код ZIP (~93 КБ)
+- ✅ `dist/ChatList-v1.0.0-Source.tar.gz` - Исходный код TAR.GZ (~78 КБ)
 - ✅ `dist/ChatList.exe` - Копия для удобства
 - ✅ `dist/chatlist.db` - База данных
 

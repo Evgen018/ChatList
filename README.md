@@ -171,6 +171,24 @@ pyinstaller ChatList.spec --clean
 
 Размер: ~43 МБ (включает все зависимости и Python runtime)
 
+### Архивы исходного кода
+
+Для создания архивов с исходным кодом (ZIP и TAR.GZ):
+
+```powershell
+.\create_archives.ps1
+```
+
+Или вручную с указанием версии:
+
+```powershell
+.\create_archives.ps1 -Version "1.0.0"
+```
+
+Архивы будут созданы в папке `dist/`:
+- `ChatList-v1.0.0-Source.zip` (~93 КБ)
+- `ChatList-v1.0.0-Source.tar.gz` (~78 КБ)
+
 ## Управление версией
 
 Версия приложения хранится в файле `version.py`:

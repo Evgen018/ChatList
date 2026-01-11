@@ -1,5 +1,5 @@
-; Скрипт Inno Setup для установки ChatList
-; Версия берётся из version.py
+; Inno Setup Script for ChatList Installation
+; Version is taken from version.py
 
 #define MyAppName "ChatList"
 #define MyAppVersion "1.0.0"
@@ -8,7 +8,7 @@
 #define MyAppExeName "ChatList-v1.0.0.exe"
 
 [Setup]
-; Основная информация о приложении
+; Application Information
 AppId={{8B3A4D2E-5C9F-4A1B-9E7D-6F2C8B4A3D1E}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
@@ -29,7 +29,7 @@ WizardStyle=modern
 UninstallDisplayIcon={app}\{#MyAppExeName}
 UninstallDisplayName={#MyAppName} {#MyAppVersion}
 
-; Архитектура
+; Architecture
 ArchitecturesInstallIn64BitMode=x64
 
 [Languages]
@@ -39,54 +39,54 @@ Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-; Исполняемый файл
+; Executable file
 Source: "dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-; База данных (если нужно установить с чистой БД)
+; Database (install only if doesn't exist)
 Source: "chatlist.db"; DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
-; Иконки
+; Icons
 Source: "app.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "app_icon.png"; DestDir: "{app}"; Flags: ignoreversion
-; Документация
+; Documentation
 Source: "README.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".env.example"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-; Создание ярлыков в меню "Пуск"
+; Start Menu shortcuts
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-; Создание ярлыка на рабочем столе (если выбрано)
+; Desktop shortcut (if selected)
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-; Запустить программу после установки
+; Launch program after installation
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
-; Удаление логов и настроек при деинсталляции (опционально)
+; Delete logs on uninstall (optional)
 Type: filesandordirs; Name: "{app}\logs"
 
 [Code]
-// Проверка наличия .NET Framework или других зависимостей (если нужно)
+// Check for dependencies (if needed)
 function InitializeSetup(): Boolean;
 begin
   Result := True;
 end;
 
-// Сохранение пользовательских данных при деинсталляции
+// Save user data during uninstallation
 function InitializeUninstall(): Boolean;
 var
   ResultCode: Integer;
 begin
   Result := True;
-  if MsgBox('Вы хотите сохранить базу данных и настройки?', mbConfirmation, MB_YESNO) = IDYES then
+  if MsgBox('Do you want to keep the database and settings?', mbConfirmation, MB_YESNO) = IDYES then
   begin
-    // Не удаляем базу данных при деинсталляции
+    // Don't delete database on uninstall
     Result := True;
   end
   else
   begin
-    // Удаляем всё, включая базу данных
+    // Delete everything including database
     DelTree(ExpandConstant('{app}\chatlist.db'), True, True, True);
     DelTree(ExpandConstant('{app}\logs'), True, True, True);
     Result := True;

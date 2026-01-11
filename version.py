@@ -1,6 +1,4 @@
-"""
-Версия приложения ChatList.
-Централизованное хранение номера версии.
-"""
+# ChatList Application Version
+# Centralized version management
 
 __version__ = "1.0.0"

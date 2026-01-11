@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ChatList - современное десктопное приложение для работы с AI-моделями через единый интерфейс">
+    <meta name="keywords" content="ChatList, AI, GPT, Claude, Gemini, OpenAI, Anthropic, искусственный интеллект">
+    <meta name="author" content="Evgen018">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://evgen018.github.io/ChatList/">
+    <meta property="og:title" content="ChatList - Единый интерфейс для AI-моделей">
+    <meta property="og:description" content="Современное десктопное приложение для работы с GPT, Claude, Gemini и другими AI-моделями">
+    <meta property="og:image" content="https://evgen018.github.io/ChatList/logo.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://evgen018.github.io/ChatList/">
+    <meta property="twitter:title" content="ChatList - Единый интерфейс для AI-моделей">
+    <meta property="twitter:description" content="Современное десктопное приложение для работы с GPT, Claude, Gemini и другими AI-моделями">
+    <meta property="twitter:image" content="https://evgen018.github.io/ChatList/logo.png">
+
+    <title>ChatList - Единый интерфейс для AI-моделей</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="logo.png">
+</head>
+<body>
+    <!-- Шапка -->
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <img src="logo.png" alt="ChatList Logo" width="40" height="40">
+                <span>ChatList</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#features">Возможности</a></li>
+                <li><a href="#download">Скачать</a></li>
+                <li><a href="#docs">Документация</a></li>
+                <li><a href="https://github.com/Evgen018/ChatList" target="_blank">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Главный блок -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Единый интерфейс для работы с <span class="gradient-text">AI-моделями</span></h1>
+                <p class="hero-description">
+                    ChatList — современное десктопное приложение для Windows, объединяющее доступ к GPT, Claude, Gemini и 100+ другим AI-моделям через единый интерфейс
+                </p>
+                <div class="hero-buttons">
+                    <a href="https://github.com/Evgen018/ChatList/releases/latest/download/ChatList-v1.0.0-Setup.exe" class="btn btn-primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Скачать v1.0.0
+                    </a>
+                    <a href="https://github.com/Evgen018/ChatList" class="btn btn-secondary" target="_blank">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        Посмотреть на GitHub
+                    </a>
+                </div>
+                <div class="version-info">
+                    <span>Версия 1.0.0</span>
+                    <span>•</span>
+                    <span>Windows 10/11</span>
+                    <span>•</span>
+                    <span>MIT License</span>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="app-preview">
+                    <div class="window-controls">
+                        <span class="control-btn red"></span>
+                        <span class="control-btn yellow"></span>
+                        <span class="control-btn green"></span>
+                    </div>
+                    <div class="app-content">
+                        <img src="logo.png" alt="ChatList Preview" width="256" height="256">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Возможности -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Основные возможности</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Множество AI-моделей</h3>
+                    <p>Поддержка OpenAI GPT, Anthropic Claude, Google Gemini и доступ к 100+ моделям через OpenRouter</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3>Улучшение промптов</h3>
+                    <p>Автоматическая оптимизация запросов для получения лучших результатов от AI-моделей</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>История запросов</h3>
+                    <p>Сохранение всех запросов и ответов в локальной базе данных с быстрым поиском</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Современный интерфейс</h3>
+                    <p>Светлая и тёмная темы, настраиваемый размер шрифта, удобные вкладки</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h3>Локальное хранение</h3>
+                    <p>Все данные хранятся локально в SQLite базе данных - полная конфиденциальность</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Безопасность</h3>
+                    <p>API ключи хранятся локально, данные не передаются третьим лицам</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Быстрая работа</h3>
+                    <p>Запуск менее чем за 2 секунды, низкое потребление памяти (~50-100 МБ)</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📤</div>
+                    <h3>Экспорт данных</h3>
+                    <p>Экспорт результатов в Markdown формат для дальнейшего использования</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Поддерживаемые модели -->
+    <section class="models">
+        <div class="container">
+            <h2 class="section-title">Поддерживаемые AI-модели</h2>
+            <div class="models-grid">
+                <div class="model-card">
+                    <h3>OpenAI</h3>
+                    <ul>
+                        <li>GPT-4 Turbo</li>
+                        <li>GPT-4</li>
+                        <li>GPT-3.5 Turbo</li>
+                    </ul>
+                </div>
+                <div class="model-card">
+                    <h3>Anthropic</h3>
+                    <ul>
+                        <li>Claude 3 Opus</li>
+                        <li>Claude 3 Sonnet</li>
+                        <li>Claude 3 Haiku</li>
+                    </ul>
+                </div>
+                <div class="model-card">
+                    <h3>Google</h3>
+                    <ul>
+                        <li>Gemini 1.5 Pro</li>
+                        <li>Gemini 1.5 Flash</li>
+                        <li>Gemini 1.0 Pro</li>
+                    </ul>
+                </div>
+                <div class="model-card highlight">
+                    <h3>OpenRouter</h3>
+                    <ul>
+                        <li>100+ моделей</li>
+                        <li>Llama, Mixtral, и другие</li>
+                        <li>Постоянные обновления</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Скачать -->
+    <section id="download" class="download">
+        <div class="container">
+            <h2 class="section-title">Скачать ChatList</h2>
+            <div class="download-options">
+                <div class="download-card">
+                    <div class="download-icon">📦</div>
+                    <h3>Инсталлятор</h3>
+                    <p>Рекомендуется для большинства пользователей</p>
+                    <ul class="download-features">
+                        <li>✓ Автоматическая установка</li>
+                        <li>✓ Ярлыки в меню "Пуск"</li>
+                        <li>✓ Удобная деинсталляция</li>
+                    </ul>
+                    <a href="https://github.com/Evgen018/ChatList/releases/latest/download/ChatList-v1.0.0-Setup.exe" class="btn btn-primary">
+                        Скачать Setup (~43 МБ)
+                    </a>
+                </div>
+                <div class="download-card">
+                    <div class="download-icon">🚀</div>
+                    <h3>Portable версия</h3>
+                    <p>Для запуска без установки</p>
+                    <ul class="download-features">
+                        <li>✓ Не требует установки</li>
+                        <li>✓ Запуск с USB-флешки</li>
+                        <li>✓ Полная автономность</li>
+                    </ul>
+                    <a href="https://github.com/Evgen018/ChatList/releases/latest/download/ChatList-v1.0.0.exe" class="btn btn-secondary">
+                        Скачать Portable (~43 МБ)
+                    </a>
+                </div>
+            </div>
+            <div class="system-requirements">
+                <h3>Системные требования</h3>
+                <div class="requirements-grid">
+                    <div class="requirement">
+                        <strong>ОС:</strong> Windows 10/11 (64-bit)
+                    </div>
+                    <div class="requirement">
+                        <strong>ОЗУ:</strong> 256 МБ минимум
+                    </div>
+                    <div class="requirement">
+                        <strong>Диск:</strong> 100 МБ свободного места
+                    </div>
+                    <div class="requirement">
+                        <strong>Интернет:</strong> Требуется для API
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Документация -->
+    <section id="docs" class="docs">
+        <div class="container">
+            <h2 class="section-title">Быстрый старт</h2>
+            <div class="docs-content">
+                <div class="doc-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Установка</h3>
+                        <p>Скачайте и запустите инсталлятор. Следуйте инструкциям на экране.</p>
+                    </div>
+                </div>
+                <div class="doc-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Получение API ключей</h3>
+                        <p>Зарегистрируйтесь на платформах AI-провайдеров и получите API ключи:</p>
+                        <ul>
+                            <li><a href="https://platform.openai.com/api-keys" target="_blank">OpenAI API Keys</a></li>
+                            <li><a href="https://console.anthropic.com/settings/keys" target="_blank">Anthropic API Keys</a></li>
+                            <li><a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></li>
+                            <li><a href="https://openrouter.ai/keys" target="_blank">OpenRouter Keys</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="doc-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Настройка</h3>
+                        <p>Создайте файл <code>.env</code> в папке с программой:</p>
+                        <pre><code>OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GOOGLE_API_KEY=AI...
+OPENROUTER_API_KEY=sk-or-...</code></pre>
+                        <p>Пример файла <code>.env.example</code> включён в поставку.</p>
+                    </div>
+                </div>
+                <div class="doc-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Начало работы</h3>
+                        <p>Запустите приложение, введите ваш промпт и выберите модель для улучшения запроса!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq">
+        <div class="container">
+            <h2 class="section-title">Часто задаваемые вопросы</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h3>Нужно ли платить за использование?</h3>
+                    <p>ChatList полностью бесплатен. Оплата требуется только за использование API провайдеров (OpenAI, Anthropic и т.д.). Большинство предоставляют бесплатные пробные кредиты.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Безопасны ли мои данные?</h3>
+                    <p>Да, все данные хранятся локально на вашем компьютере. API ключи хранятся в файле .env и не передаются никуда, кроме официальных серверов провайдеров.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Какие модели лучше использовать?</h3>
+                    <p>Для сложных задач: GPT-4, Claude 3 Opus. Для быстрых ответов: GPT-3.5, Claude 3 Haiku, Gemini Flash. Экспериментируйте с разными моделями!</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Есть ли версия для Mac/Linux?</h3>
+                    <p>Пока поддерживается только Windows. Версии для macOS и Linux запланированы в будущих релизах.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ChatList</h3>
+                    <p>Современное приложение для работы с AI-моделями</p>
+                    <div class="social-links">
+                        <a href="https://github.com/Evgen018/ChatList" target="_blank" aria-label="GitHub">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Ссылки</h4>
+                    <ul>
+                        <li><a href="https://github.com/Evgen018/ChatList">Исходный код</a></li>
+                        <li><a href="https://github.com/Evgen018/ChatList/releases">Релизы</a></li>
+                        <li><a href="https://github.com/Evgen018/ChatList/issues">Сообщить о проблеме</a></li>
+                        <li><a href="https://github.com/Evgen018/ChatList/blob/main/LICENSE">Лицензия</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Документация</h4>
+                    <ul>
+                        <li><a href="https://github.com/Evgen018/ChatList/blob/main/README.md">README</a></li>
+                        <li><a href="https://github.com/Evgen018/ChatList/blob/main/PROJECT.md">О проекте</a></li>
+                        <li><a href="https://github.com/Evgen018/ChatList/blob/main/DATABASE.md">База данных</a></li>
+                        <li><a href="https://github.com/Evgen018/ChatList/blob/main/RELEASE.md">Публикация</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Поддержка</h4>
+                    <ul>
+                        <li><a href="https://github.com/Evgen018/ChatList/discussions">Обсуждения</a></li>
+                        <li><a href="https://github.com/Evgen018/ChatList/wiki">Wiki</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025-2026 ChatList. Распространяется под <a href="https://github.com/Evgen018/ChatList/blob/main/LICENSE">MIT License</a></p>
+                <p>Сделано с ❤️ в России</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Плавная прокрутка для якорных ссылок
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Анимация появления элементов при прокрутке
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .model-card, .download-card, .doc-step, .faq-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

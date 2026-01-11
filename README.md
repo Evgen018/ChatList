@@ -1,10 +1,28 @@
 # ChatList
 
-Приложение для отправки одного и того же промпта в несколько нейросетей и сравнения их ответов.
+<div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)
-![PyQt5](https://img.shields.io/badge/GUI-PyQt5-green.svg)
-![SQLite](https://img.shields.io/badge/DB-SQLite-orange.svg)
+![ChatList Logo](app_icon.png)
+
+**Современное десктопное приложение для работы с AI-моделями**
+
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/Evgen018/ChatList/releases/latest)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
+[![PyQt5](https://img.shields.io/badge/GUI-PyQt5-green.svg)](https://www.riverbankcomputing.com/software/pyqt/)
+[![SQLite](https://img.shields.io/badge/DB-SQLite-orange.svg)](https://www.sqlite.org/)
+[![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)](https://github.com/Evgen018/ChatList/releases/latest)
+
+[📥 Скачать](https://github.com/Evgen018/ChatList/releases/latest) • 
+[📖 Документация](https://evgen018.github.io/ChatList/) • 
+[🐛 Сообщить о проблеме](https://github.com/Evgen018/ChatList/issues) • 
+[💬 Обсуждения](https://github.com/Evgen018/ChatList/discussions)
+
+</div>
+
+---
+
+Приложение для отправки одного и того же промпта в несколько нейросетей и сравнения их ответов.
 
 ## Возможности
 
@@ -204,10 +222,40 @@ __version__ = "1.0.0"
 - **Сохранить базу данных и настройки** — для переноса или обновления
 - **Удалить всё** — полная очистка системы
 
+## Публикация на GitHub
+
+Для публикации нового релиза см. подробную инструкцию в [RELEASE.md](RELEASE.md).
+
+**Кратко:**
+1. Обновите версию в `version.py`
+2. Создайте билды: `pyinstaller ChatList.spec` + Inno Setup
+3. Создайте тег: `git tag v1.0.X && git push origin v1.0.X`
+4. Создайте [GitHub Release](https://github.com/Evgen018/ChatList/releases/new)
+5. Загрузите файлы Setup.exe и .exe
+
+## Ссылки
+
+- 🌐 **Официальный сайт:** https://evgen018.github.io/ChatList/
+- 📦 **Релизы:** https://github.com/Evgen018/ChatList/releases
+- 📚 **Документация:** https://github.com/Evgen018/ChatList/wiki
+- 🐛 **Issues:** https://github.com/Evgen018/ChatList/issues
+- 💬 **Обсуждения:** https://github.com/Evgen018/ChatList/discussions
+- 📝 **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+
 ## Лицензия
 
-MIT License
+Этот проект распространяется под лицензией MIT. См. файл [LICENSE](LICENSE) для подробностей.
 
 ## Автор
 
-[Evgen018](https://github.com/Evgen018)
+**[Evgen018](https://github.com/Evgen018)**
+
+Сделано с ❤️ в России
+
+---
+
+<div align="center">
+
+**Понравилось? Поставьте ⭐ на [GitHub](https://github.com/Evgen018/ChatList)!**
+
+</div>

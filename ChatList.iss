@@ -22,7 +22,7 @@ DisableProgramGroupPage=yes
 LicenseFile=LICENSE
 OutputDir=dist
 OutputBaseFilename=ChatList-v{#MyAppVersion}-Setup
-SetupIconFile=app_ai.ico
+SetupIconFile=app.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -44,7 +44,7 @@ Source: "dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 ; Database (install only if doesn't exist)
 Source: "chatlist.db"; DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
 ; Icons
-Source: "app_ai.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "app.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "app_icon.png"; DestDir: "{app}"; Flags: ignoreversion
 ; Documentation
 Source: "README.md"; DestDir: "{app}"; Flags: ignoreversion

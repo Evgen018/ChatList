@@ -1867,7 +1867,9 @@ class MainWindow(QMainWindow):
         }
         QTabBar::tab:selected {
             background: white;
-            border-bottom: none;
+            border-bottom: 3px solid #3498db;
+            color: #3498db;
+            font-weight: bold;
         }
         QTableWidget {
             background-color: white;

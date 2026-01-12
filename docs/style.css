@@ -596,19 +596,23 @@ footer {
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 30px;
     margin-top: 50px;
+    overflow: visible;
 }
 
 .screenshot-card {
     background: white;
     border-radius: 12px;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    z-index: 1;
 }
 
 .screenshot-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    z-index: 10;
 }
 
 .screenshot-card img {
@@ -616,6 +620,12 @@ footer {
     height: auto;
     display: block;
     cursor: pointer;
+    transition: transform 0.3s ease;
+    transform-origin: center center;
+}
+
+.screenshot-card:hover img {
+    transform: scale(2);
 }
 
 .screenshot-caption {

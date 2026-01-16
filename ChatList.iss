@@ -30,7 +30,7 @@ UninstallDisplayIcon={app}\{#MyAppExeName}
 UninstallDisplayName={#MyAppName} {#MyAppVersion}
 
 ; Architecture
-ArchitecturesInstallIn64BitMode=x64
+ArchitecturesInstallIn64BitMode=x64compatible
 
 [Languages]
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
@@ -62,6 +62,10 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 ; Launch program after installation
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
+[UninstallRun]
+; Close the app before uninstall (ignore if not running)
+Filename: "{sys}\taskkill.exe"; Parameters: "/IM {#MyAppExeName} /F"; Flags: runhidden; RunOnceId: "CloseChatList"
+
 [UninstallDelete]
 ; Delete logs on uninstall (optional)
 Type: filesandordirs; Name: "{app}\logs"
@@ -75,8 +79,6 @@ end;
 
 // Save user data during uninstallation
 function InitializeUninstall(): Boolean;
-var
-  ResultCode: Integer;
 begin
   Result := True;
   if MsgBox('Do you want to keep the database and settings?', mbConfirmation, MB_YESNO) = IDYES then

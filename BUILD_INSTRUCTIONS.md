@@ -53,6 +53,8 @@ notepad ChatList.iss
 
 ### 3.1. Активируйте виртуальное окружение (если используется)
 ```powershell
+# PowerShell (не запускать через python)
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\venv\Scripts\Activate.ps1
 ```
 

@@ -5,7 +5,7 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/lang/ru/).
 
-## [1.0.0] - 2026-01-11
+## [1.0.4] - 2026-01-11
 
 ### 🎉 Первый публичный релиз
 
@@ -46,8 +46,8 @@
   - Управление версиями через version.py
   
 - 📦 Дистрибуция:
-  - Исполняемый файл ChatList-v1.0.0.exe (~43 МБ)
-  - Инсталлятор ChatList-v1.0.0-Setup.exe
+  - Исполняемый файл ChatList-v1.0.4.exe (~43 МБ)
+  - Инсталлятор ChatList-v1.0.4-Setup.exe
   - Полная деинсталляция с опцией сохранения данных
   
 - 📚 Документация:
@@ -95,5 +95,5 @@
 
 ---
 
-[1.0.0]: https://github.com/Evgen018/ChatList/releases/tag/v1.0.0
-[Unreleased]: https://github.com/Evgen018/ChatList/compare/v1.0.0...HEAD
+[1.0.4]: https://github.com/Evgen018/ChatList/releases/tag/v1.0.4
+[Unreleased]: https://github.com/Evgen018/ChatList/compare/v1.0.4...HEAD

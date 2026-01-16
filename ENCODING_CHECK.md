@@ -107,7 +107,7 @@ chcp 65001
 ### Python импорт
 ```powershell
 python -c "import version; print(version.__version__)"
-# Output: 1.0.0 ✓
+# Output: 1.0.4 ✓
 ```
 
 ### Кодировки Python

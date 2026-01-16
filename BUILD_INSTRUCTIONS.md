@@ -21,11 +21,11 @@ notepad version.py
 ### 1.2. Обновите версию
 Измените строку:
 ```python
-__version__ = "1.0.2"
+__version__ = "1.0.4"
 ```
 на:
 ```python
-__version__ = "1.0.3"
+__version__ = "1.0.4"
 ```
 
 ### 1.3. Сохраните файл
@@ -41,8 +41,8 @@ notepad ChatList.iss
 
 ### 2.2. Обновите версию в двух местах:
 ```iss
-#define MyAppVersion "1.0.3"
-#define MyAppExeName "ChatList-v1.0.3.exe"
+#define MyAppVersion "1.0.4"
+#define MyAppExeName "ChatList-v1.0.4.exe"
 ```
 
 ### 2.3. Сохраните файл
@@ -70,11 +70,11 @@ pyinstaller ChatList.spec
 ### 3.4. Проверьте результат
 После завершения проверьте, что файл создан:
 ```powershell
-Get-Item "dist\ChatList-v1.0.3.exe"
+Get-Item "dist\ChatList-v1.0.4.exe"
 ```
 
 **Ожидаемый результат:**
-- ✅ Файл `dist\ChatList-v1.0.3.exe` создан
+- ✅ Файл `dist\ChatList-v1.0.4.exe` создан
 - ✅ Размер файла ~40-50 МБ
 
 ---
@@ -91,11 +91,11 @@ Get-Item "dist\ChatList-v1.0.3.exe"
 
 ### 4.3. Проверьте результат
 ```powershell
-Get-Item "dist\ChatList-v1.0.3-Setup.exe"
+Get-Item "dist\ChatList-v1.0.4-Setup.exe"
 ```
 
 **Ожидаемый результат:**
-- ✅ Файл `dist\ChatList-v1.0.3-Setup.exe` создан
+- ✅ Файл `dist\ChatList-v1.0.4-Setup.exe` создан
 - ✅ Размер файла ~30-40 МБ
 
 ---
@@ -104,17 +104,17 @@ Get-Item "dist\ChatList-v1.0.3-Setup.exe"
 
 ### 5.1. Запустите скрипт создания архивов
 ```powershell
-.\create_archives.ps1 -Version "1.0.3"
+.\create_archives.ps1 -Version "1.0.4"
 ```
 
 ### 5.2. Проверьте результат
 ```powershell
-Get-Item "dist\*1.0.3-Source*"
+Get-Item "dist\*1.0.4-Source*"
 ```
 
 **Ожидаемый результат:**
-- ✅ `dist\ChatList-v1.0.3-Source.zip`
-- ✅ `dist\ChatList-v1.0.3-Source.tar.gz`
+- ✅ `dist\ChatList-v1.0.4-Source.zip`
+- ✅ `dist\ChatList-v1.0.4-Source.tar.gz`
 
 ---
 
@@ -122,14 +122,14 @@ Get-Item "dist\*1.0.3-Source*"
 
 ### 6.1. Проверьте содержимое папки `dist`
 ```powershell
-Get-ChildItem dist\*1.0.3* | Select-Object Name, @{Name="Size (MB)";Expression={[math]::Round($_.Length/1MB, 2)}}
+Get-ChildItem dist\*1.0.4* | Select-Object Name, @{Name="Size (MB)";Expression={[math]::Round($_.Length/1MB, 2)}}
 ```
 
 **Ожидаемые файлы:**
-1. ✅ `ChatList-v1.0.3.exe` (~40-50 МБ)
-2. ✅ `ChatList-v1.0.3-Setup.exe` (~30-40 МБ)
-3. ✅ `ChatList-v1.0.3-Source.zip` (~100-200 КБ)
-4. ✅ `ChatList-v1.0.3-Source.tar.gz` (~50-100 КБ)
+1. ✅ `ChatList-v1.0.4.exe` (~40-50 МБ)
+2. ✅ `ChatList-v1.0.4-Setup.exe` (~30-40 МБ)
+3. ✅ `ChatList-v1.0.4-Source.zip` (~100-200 КБ)
+4. ✅ `ChatList-v1.0.4-Source.tar.gz` (~50-100 КБ)
 
 ---
 
@@ -137,7 +137,7 @@ Get-ChildItem dist\*1.0.3* | Select-Object Name, @{Name="Size (MB)";Expression={
 
 ### 7.1. Протестируйте исполняемый файл
 ```powershell
-.\dist\ChatList-v1.0.3.exe
+.\dist\ChatList-v1.0.4.exe
 ```
 
 **Проверьте:**
@@ -147,7 +147,7 @@ Get-ChildItem dist\*1.0.3* | Select-Object Name, @{Name="Size (MB)";Expression={
 
 ### 7.2. Протестируйте инсталлятор
 ```powershell
-.\dist\ChatList-v1.0.3-Setup.exe
+.\dist\ChatList-v1.0.4-Setup.exe
 ```
 
 **Проверьте:**
@@ -166,7 +166,7 @@ git add version.py ChatList.iss main.py
 
 ### 8.2. Создайте коммит
 ```powershell
-git commit -m "Update to v1.0.3: Add visual indicator for selected tab in light theme"
+git commit -m "Update to v1.0.4: Add visual indicator for selected tab in light theme"
 ```
 
 ### 8.3. Отправьте изменения
@@ -183,11 +183,11 @@ git push origin main
 
 ### 9.2. Заполните информацию о релизе
 
-**Tag:** `v1.0.3`
-- Выберите "Create new tag: v1.0.3"
+**Tag:** `v1.0.4`
+- Выберите "Create new tag: v1.0.4"
 - Выберите "Target: main"
 
-**Release title:** `ChatList v1.0.3`
+**Release title:** `ChatList v1.0.4`
 
 **Description:**
 ```markdown
@@ -199,18 +199,18 @@ git push origin main
 
 ## 📦 Файлы для скачивания
 
-- **ChatList-v1.0.3-Setup.exe** - Инсталлятор (рекомендуется)
-- **ChatList-v1.0.3.exe** - Portable версия
-- **ChatList-v1.0.3-Source.zip** - Исходный код (ZIP)
-- **ChatList-v1.0.3-Source.tar.gz** - Исходный код (TAR.GZ)
+- **ChatList-v1.0.4-Setup.exe** - Инсталлятор (рекомендуется)
+- **ChatList-v1.0.4.exe** - Portable версия
+- **ChatList-v1.0.4-Source.zip** - Исходный код (ZIP)
+- **ChatList-v1.0.4-Source.tar.gz** - Исходный код (TAR.GZ)
 ```
 
 ### 9.3. Загрузите файлы
 Перетащите в область "Attach binaries" следующие файлы из папки `dist`:
-1. `ChatList-v1.0.3-Setup.exe`
-2. `ChatList-v1.0.3.exe`
-3. `ChatList-v1.0.3-Source.zip`
-4. `ChatList-v1.0.3-Source.tar.gz`
+1. `ChatList-v1.0.4-Setup.exe`
+2. `ChatList-v1.0.4.exe`
+3. `ChatList-v1.0.4-Source.zip`
+4. `ChatList-v1.0.4-Source.tar.gz`
 
 ### 9.4. Опубликуйте релиз
 - Нажмите кнопку **"Publish release"**
@@ -227,14 +227,14 @@ notepad docs\index.html
 ```
 
 ### 10.2. Обновите версию в ссылках
-Найдите и замените все упоминания `v1.0.2` на `v1.0.3`:
+Найдите и замените все упоминания предыдущей версии на `v1.0.4`:
 - В кнопках скачивания
 - В тексте версии
 
 ### 10.3. Сохраните и закоммитьте
 ```powershell
 git add docs/index.html
-git commit -m "Update version to 1.0.3 on GitHub Pages"
+git commit -m "Update version to 1.0.4 on GitHub Pages"
 git push origin main
 ```
 
@@ -264,7 +264,7 @@ pip install -r requirements.txt
 
 ### Проблема: Inno Setup не компилирует
 **Решение:**
-- Убедитесь, что файл `dist\ChatList-v1.0.3.exe` существует
+- Убедитесь, что файл `dist\ChatList-v1.0.4.exe` существует
 - Проверьте пути в `ChatList.iss`
 
 ### Проблема: Файлы слишком большие

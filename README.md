@@ -6,7 +6,7 @@
 
 **Современное десктопное приложение для работы с AI-моделями**
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/Evgen018/ChatList/releases/latest)
+[![Version](https://img.shields.io/badge/version-1.0.4-blue.svg)](https://github.com/Evgen018/ChatList/releases/latest)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
 [![PyQt5](https://img.shields.io/badge/GUI-PyQt5-green.svg)](https://www.riverbankcomputing.com/software/pyqt/)
@@ -166,7 +166,7 @@ pyinstaller ChatList.spec --clean
 ```
 
 Готовый файл будет находиться в `dist/`:
-- `ChatList-v1.0.0.exe` — с версией в имени
+- `ChatList-v1.0.4.exe` — с версией в имени
 - `ChatList.exe` — для удобства запуска
 
 Размер: ~43 МБ (включает все зависимости и Python runtime)
@@ -182,19 +182,19 @@ pyinstaller ChatList.spec --clean
 Или вручную с указанием версии:
 
 ```powershell
-.\create_archives.ps1 -Version "1.0.0"
+.\create_archives.ps1 -Version "1.0.4"
 ```
 
 Архивы будут созданы в папке `dist/`:
-- `ChatList-v1.0.0-Source.zip` (~93 КБ)
-- `ChatList-v1.0.0-Source.tar.gz` (~78 КБ)
+- `ChatList-v1.0.4-Source.zip` (~93 КБ)
+- `ChatList-v1.0.4-Source.tar.gz` (~78 КБ)
 
 ## Управление версией
 
 Версия приложения хранится в файле `version.py`:
 
 ```python
-__version__ = "1.0.0"
+__version__ = "1.0.4"
 ```
 
 **Для изменения версии приложения достаточно отредактировать только один файл — `version.py`.**
@@ -218,7 +218,7 @@ __version__ = "1.0.0"
 1. Откройте файл `ChatList.iss` в **Inno Setup Compiler**
 2. Нажмите **Build → Compile** (или F9)
 3. Инсталлятор будет создан в папке `dist/`:
-   - `ChatList-v1.0.0-Setup.exe`
+   - `ChatList-v1.0.4-Setup.exe`
 
 #### Через командную строку:
 ```powershell
@@ -226,7 +226,7 @@ __version__ = "1.0.0"
 ```
 
 ### Что включает инсталлятор
-- ✅ Исполняемый файл `ChatList-v1.0.0.exe`
+- ✅ Исполняемый файл `ChatList-v1.0.4.exe`
 - ✅ Базу данных `chatlist.db` (создаётся при первом запуске)
 - ✅ Иконки приложения (`app.ico`, `app_icon.png`)
 - ✅ Документацию (`README.md`, `LICENSE`)

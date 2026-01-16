@@ -2,10 +2,10 @@
 ; Version is taken from version.py
 
 #define MyAppName "ChatList"
-#define MyAppVersion "1.0.3"
+#define MyAppVersion "1.0.4"
 #define MyAppPublisher "ChatList Team"
 #define MyAppURL "https://github.com/Evgen018/ChatList"
-#define MyAppExeName "ChatList-v1.0.3.exe"
+#define MyAppExeName "ChatList-v1.0.4.exe"
 
 [Setup]
 ; Application Information

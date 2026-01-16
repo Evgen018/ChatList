@@ -31,13 +31,366 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QFont, QIcon
 
+TRANSLATIONS = {
+    "ru": {
+        "app_title": "ChatList — Сравнение нейросетей",
+        "tab_request": "📝 Запрос",
+        "tab_results": "📊 Результаты",
+        "tab_models": "🤖 Модели",
+        "tab_history": "📚 История",
+        "tab_settings": "⚙️ Настройки",
+        "error_title": "Ошибка",
+        "success_title": "Успех",
+        "confirm_title": "Подтверждение",
+        "edit_title": "Редактирование",
+        "done_title": "Готово",
+        "dialog_response_title": "Ответ: {title}",
+        "dialog_copy": "📋 Копировать",
+        "dialog_close": "Закрыть",
+        "dialog_copied": "Текст скопирован в буфер обмена",
+        "prompt_improver_title": "✨ Улучшение промпта",
+        "prompt_dialog_title": "Промпт",
+        "prompt_original_label": "📝 Оригинальный промпт:",
+        "prompt_improved_label": "✨ Улучшенный промпт:",
+        "prompt_use_improved": "✅ Использовать этот вариант",
+        "prompt_alt_label": "🔄 Альтернативные варианты:",
+        "prompt_alt_title": "Альтернатива {index}",
+        "prompt_use_alt": "Использовать альтернативу {index}",
+        "prompt_close": "Закрыть",
+        "request_title": "Введите промпт",
+        "prompt_view_btn": "📖 Просмотр",
+        "prompt_edit_btn": "✏️ Изменить",
+        "prompt_delete_btn": "🗑️ Удалить",
+        "request_saved_prompts": "Сохранённые промпты:",
+        "request_select_prompt_placeholder": "— Выберите промпт —",
+        "request_prompt_placeholder": "Введите ваш запрос здесь...",
+        "request_tags_label": "Теги:",
+        "request_tags_placeholder": "теги через запятую",
+        "request_save_btn": "💾 Сохранить промпт",
+        "request_improve_btn": "✨ Улучшить",
+        "request_improve_tooltip": "AI-ассистент улучшит ваш промпт",
+        "request_send_btn": "🚀 Отправить",
+        "request_status_saved": "Промпт сохранён",
+        "request_status_deleted": "Промпт удалён",
+        "request_status_updated": "Промпт обновлён",
+        "request_status_editing": "Редактирование промпта. Измените и нажмите 'Сохранить'",
+        "request_error_enter_prompt": "Введите текст промпта",
+        "request_error_select_prompt": "Выберите промпт",
+        "request_error_no_models": "Нет активных моделей. Добавьте модели на вкладке «Модели».",
+        "request_error_enter_prompt_improve": "Введите текст промпта для улучшения",
+        "confirm_delete_prompt": "Удалить выбранный промпт?",
+        "results_title": "Результаты запроса",
+        "results_view_btn": "📖 Просмотр",
+        "results_delete_btn": "🗑️ Удалить",
+        "results_select_all": "☑ Выбрать все",
+        "results_deselect_all": "☐ Снять все",
+        "results_table_select": "",
+        "results_table_model": "Модель",
+        "results_table_response": "Ответ",
+        "results_table_tokens": "Токены",
+        "results_save_btn": "💾 Сохранить выбранные",
+        "results_clear_btn": "🗑 Очистить",
+        "results_error_no_selection": "Не выбрано ни одного результата",
+        "results_prompt_prefix": "Промпт: {prompt}",
+        "results_save_success": "Сохранено {count} результатов",
+        "confirm_delete_result": "Удалить выбранный результат?",
+        "results_error_select_result": "Выберите результат",
+        "models_title": "Управление моделями",
+        "models_view_btn": "📖 Просмотр",
+        "models_edit_btn": "✏️ Изменить",
+        "models_delete_btn": "🗑️ Удалить",
+        "models_table_active": "Активна",
+        "models_table_name": "Название",
+        "models_table_provider": "Провайдер",
+        "models_table_url": "URL",
+        "models_table_api_key": "API-ключ",
+        "models_table_model_id": "Model ID",
+        "models_form_title": "Добавить модель",
+        "models_name_placeholder": "Название",
+        "models_url_placeholder": "API URL",
+        "models_api_key_placeholder": "Имя переменной окружения (напр. OPENAI_API_KEY)",
+        "models_model_id_placeholder": "Model ID",
+        "models_add_btn": "➕ Добавить",
+        "models_default_btn": "📋 Добавить модели по умолчанию",
+        "models_error_fill_fields": "Заполните все поля",
+        "models_error_select_model": "Выберите модель",
+        "models_confirm_delete": "Удалить модель?",
+        "models_info_edit_title": "Редактирование",
+        "models_info_edit_body": "Измените данные и нажмите 'Добавить'",
+        "models_default_added_title": "Готово",
+        "models_default_added_body": "Модели по умолчанию добавлены",
+        "models_info_name": "Название",
+        "models_info_provider": "Провайдер",
+        "models_info_api_url": "API URL",
+        "models_info_api_key": "API ключ",
+        "models_info_model_id": "Model ID",
+        "models_info_active": "Активна",
+        "models_info_active_yes": "Да",
+        "models_info_active_no": "Нет",
+        "edit_result_title_edit": "Редактирование записи",
+        "edit_result_title_new": "Новая запись",
+        "edit_result_model_label": "Модель:",
+        "edit_result_prompt_label": "Промпт:",
+        "edit_result_response_label": "Ответ:",
+        "edit_result_cancel_btn": "Отмена",
+        "edit_result_save_btn": "💾 Сохранить",
+        "history_title": "История результатов",
+        "history_search_placeholder": "🔍 Поиск...",
+        "history_view_btn": "📖 Просмотр",
+        "history_edit_btn": "✏️ Изменить",
+        "history_delete_btn": "🗑️ Удалить",
+        "history_export_md": "📄 Markdown",
+        "history_export_json": "📋 JSON",
+        "history_table_date": "Дата",
+        "history_table_model": "Модель",
+        "history_table_prompt": "Промпт",
+        "history_table_response": "Ответ",
+        "history_page_label": "Страница {current} из {total}",
+        "history_total_label": "Всего: {total}",
+        "history_per_page_label": "На странице:",
+        "history_error_select_record": "Выберите запись",
+        "history_confirm_delete": "Удалить выбранную запись?",
+        "history_export_no_data": "Нет данных для экспорта",
+        "history_export_title": "Сохранить как",
+        "history_export_markdown_filter": "Markdown (*.md)",
+        "history_export_json_filter": "JSON (*.json)",
+        "history_export_success": "Экспортировано в {path}",
+        "history_export_header": "# История ChatList",
+        "history_export_prompt_label": "**Промпт:**",
+        "history_export_response_label": "**Ответ:**",
+        "history_edit_success": "Запись обновлена",
+        "about_title": "О программе",
+        "about_version": "Версия {version}",
+        "about_description": (
+            "Приложение для сравнения ответов нейросетей.\n\n"
+            "Отправляйте один промпт в несколько AI-моделей\n"
+            "и сравнивайте их ответы в удобной таблице.\n\n"
+            "Поддерживаются: OpenAI, Anthropic, Google,\n"
+            "OpenRouter и другие OpenAI-совместимые API."
+        ),
+        "about_author": "© 2025-2026 ChatList",
+        "about_close_btn": "Закрыть",
+        "settings_title": "Настройки",
+        "settings_appearance_title": "🎨 Оформление",
+        "settings_language_label": "Язык интерфейса:",
+        "settings_theme_label": "Тема:",
+        "settings_theme_light": "☀️ Светлая",
+        "settings_theme_dark": "🌙 Тёмная",
+        "settings_font_label": "Размер шрифта:",
+        "settings_font_suffix": " пт",
+        "settings_requests_title": "🌐 Запросы к API",
+        "settings_timeout_label": "Таймаут запроса:",
+        "settings_timeout_suffix": " сек",
+        "settings_tokens_label": "Максимум токенов:",
+        "settings_ai_title": "✨ AI-ассистент для улучшения промптов",
+        "settings_improve_model_label": "Модель для улучшения:",
+        "settings_hint": "💡 Модель используется для анализа и улучшения ваших промптов",
+        "settings_save_btn": "💾 Сохранить настройки",
+        "settings_about_btn": "ℹ️ О программе",
+        "settings_saved": "Настройки сохранены",
+        "request_status_sending": "Отправка в {count} моделей...",
+        "request_status_received": "Получено {count} ответов",
+        "request_status_error": "Ошибка: {error}",
+        "improve_status_running": "✨ AI улучшает ваш промпт...",
+        "improve_status_done": "✨ Промпт улучшен!",
+        "improve_error_message": "Не удалось улучшить промпт:\n{error}",
+        "improve_error_generic": "Ошибка при улучшении промпта:\n{error}",
+        "language_ru": "Русский",
+        "language_me": "Crnogorski (latinica)",
+    },
+    "me-latn": {
+        "app_title": "ChatList — Upoređivanje neuronskih mreža",
+        "tab_request": "📝 Upit",
+        "tab_results": "📊 Rezultati",
+        "tab_models": "🤖 Modeli",
+        "tab_history": "📚 Istorija",
+        "tab_settings": "⚙️ Podešavanja",
+        "error_title": "Greška",
+        "success_title": "Uspjeh",
+        "confirm_title": "Potvrda",
+        "edit_title": "Uređivanje",
+        "done_title": "Gotovo",
+        "dialog_response_title": "Odgovor: {title}",
+        "dialog_copy": "📋 Kopiraj",
+        "dialog_close": "Zatvori",
+        "dialog_copied": "Tekst je kopiran u međuspremnik",
+        "prompt_improver_title": "✨ Unapređenje upita",
+        "prompt_dialog_title": "Upit",
+        "prompt_original_label": "📝 Originalni upit:",
+        "prompt_improved_label": "✨ Unaprijeđeni upit:",
+        "prompt_use_improved": "✅ Koristi ovu verziju",
+        "prompt_alt_label": "🔄 Alternativne verzije:",
+        "prompt_alt_title": "Alternativa {index}",
+        "prompt_use_alt": "Koristi alternativu {index}",
+        "prompt_close": "Zatvori",
+        "request_title": "Unesite upit",
+        "prompt_view_btn": "📖 Pregled",
+        "prompt_edit_btn": "✏️ Izmijeni",
+        "prompt_delete_btn": "🗑️ Obriši",
+        "request_saved_prompts": "Sačuvani upiti:",
+        "request_select_prompt_placeholder": "— Izaberite upit —",
+        "request_prompt_placeholder": "Unesite vaš upit ovdje...",
+        "request_tags_label": "Tagovi:",
+        "request_tags_placeholder": "tagovi odvojeni zarezom",
+        "request_save_btn": "💾 Sačuvaj upit",
+        "request_improve_btn": "✨ Unaprijedi",
+        "request_improve_tooltip": "AI asistent unapređuje vaš upit",
+        "request_send_btn": "🚀 Pošalji",
+        "request_status_saved": "Upit je sačuvan",
+        "request_status_deleted": "Upit je obrisan",
+        "request_status_updated": "Upit je ažuriran",
+        "request_status_editing": "Uređivanje upita. Izmijenite i kliknite 'Sačuvaj'",
+        "request_error_enter_prompt": "Unesite tekst upita",
+        "request_error_select_prompt": "Izaberite upit",
+        "request_error_no_models": "Nema aktivnih modela. Dodajte modele na kartici «Modeli».",
+        "request_error_enter_prompt_improve": "Unesite tekst upita za unapređenje",
+        "confirm_delete_prompt": "Obrisati izabrani upit?",
+        "results_title": "Rezultati upita",
+        "results_view_btn": "📖 Pregled",
+        "results_delete_btn": "🗑️ Obriši",
+        "results_select_all": "☑ Izaberi sve",
+        "results_deselect_all": "☐ Poništi sve",
+        "results_table_select": "",
+        "results_table_model": "Model",
+        "results_table_response": "Odgovor",
+        "results_table_tokens": "Tokeni",
+        "results_save_btn": "💾 Sačuvaj izabrane",
+        "results_clear_btn": "🗑 Očisti",
+        "results_error_no_selection": "Nijedan rezultat nije izabran",
+        "results_prompt_prefix": "Upit: {prompt}",
+        "results_save_success": "Sačuvano {count} rezultata",
+        "confirm_delete_result": "Obrisati izabrani rezultat?",
+        "results_error_select_result": "Izaberite rezultat",
+        "models_title": "Upravljanje modelima",
+        "models_view_btn": "📖 Pregled",
+        "models_edit_btn": "✏️ Izmijeni",
+        "models_delete_btn": "🗑️ Obriši",
+        "models_table_active": "Aktivna",
+        "models_table_name": "Naziv",
+        "models_table_provider": "Provajder",
+        "models_table_url": "URL",
+        "models_table_api_key": "API ključ",
+        "models_table_model_id": "Model ID",
+        "models_form_title": "Dodaj model",
+        "models_name_placeholder": "Naziv",
+        "models_url_placeholder": "API URL",
+        "models_api_key_placeholder": "Naziv env varijable (npr. OPENAI_API_KEY)",
+        "models_model_id_placeholder": "Model ID",
+        "models_add_btn": "➕ Dodaj",
+        "models_default_btn": "📋 Dodaj podrazumijevane modele",
+        "models_error_fill_fields": "Popunite sva polja",
+        "models_error_select_model": "Izaberite model",
+        "models_confirm_delete": "Obrisati model?",
+        "models_info_edit_title": "Uređivanje",
+        "models_info_edit_body": "Izmijenite podatke i kliknite 'Dodaj'",
+        "models_default_added_title": "Gotovo",
+        "models_default_added_body": "Podrazumijevani modeli su dodati",
+        "models_info_name": "Naziv",
+        "models_info_provider": "Provajder",
+        "models_info_api_url": "API URL",
+        "models_info_api_key": "API ključ",
+        "models_info_model_id": "Model ID",
+        "models_info_active": "Aktivna",
+        "models_info_active_yes": "Da",
+        "models_info_active_no": "Ne",
+        "edit_result_title_edit": "Uređivanje zapisa",
+        "edit_result_title_new": "Novi zapis",
+        "edit_result_model_label": "Model:",
+        "edit_result_prompt_label": "Upit:",
+        "edit_result_response_label": "Odgovor:",
+        "edit_result_cancel_btn": "Otkaži",
+        "edit_result_save_btn": "💾 Sačuvaj",
+        "history_title": "Istorija rezultata",
+        "history_search_placeholder": "🔍 Pretraga...",
+        "history_view_btn": "📖 Pregled",
+        "history_edit_btn": "✏️ Izmijeni",
+        "history_delete_btn": "🗑️ Obriši",
+        "history_export_md": "📄 Markdown",
+        "history_export_json": "📋 JSON",
+        "history_table_date": "Datum",
+        "history_table_model": "Model",
+        "history_table_prompt": "Upit",
+        "history_table_response": "Odgovor",
+        "history_page_label": "Stranica {current} od {total}",
+        "history_total_label": "Ukupno: {total}",
+        "history_per_page_label": "Po stranici:",
+        "history_error_select_record": "Izaberite zapis",
+        "history_confirm_delete": "Obrisati izabrani zapis?",
+        "history_export_no_data": "Nema podataka za izvoz",
+        "history_export_title": "Sačuvaj kao",
+        "history_export_markdown_filter": "Markdown (*.md)",
+        "history_export_json_filter": "JSON (*.json)",
+        "history_export_success": "Izvezeno u {path}",
+        "history_export_header": "# Istorija ChatList",
+        "history_export_prompt_label": "**Upit:**",
+        "history_export_response_label": "**Odgovor:**",
+        "history_edit_success": "Zapis je ažuriran",
+        "about_title": "O programu",
+        "about_version": "Verzija {version}",
+        "about_description": (
+            "Aplikacija za upoređivanje odgovora neuronskih mreža.\n\n"
+            "Pošaljite jedan upit u više AI modela\n"
+            "i uporedite njihove odgovore u zgodnoj tabeli.\n\n"
+            "Podržani su: OpenAI, Anthropic, Google,\n"
+            "OpenRouter i drugi OpenAI-kompatibilni API-jevi."
+        ),
+        "about_author": "© 2025-2026 ChatList",
+        "about_close_btn": "Zatvori",
+        "settings_title": "Podešavanja",
+        "settings_appearance_title": "🎨 Izgled",
+        "settings_language_label": "Jezik interfejsa:",
+        "settings_theme_label": "Tema:",
+        "settings_theme_light": "☀️ Svijetla",
+        "settings_theme_dark": "🌙 Tamna",
+        "settings_font_label": "Veličina fonta:",
+        "settings_font_suffix": " pt",
+        "settings_requests_title": "🌐 API zahtjevi",
+        "settings_timeout_label": "Timeout zahtjeva:",
+        "settings_timeout_suffix": " s",
+        "settings_tokens_label": "Maksimum tokena:",
+        "settings_ai_title": "✨ AI asistent za unapređenje upita",
+        "settings_improve_model_label": "Model za unapređenje:",
+        "settings_hint": "💡 Model se koristi za analizu i unapređenje vaših upita",
+        "settings_save_btn": "💾 Sačuvaj podešavanja",
+        "settings_about_btn": "ℹ️ O programu",
+        "settings_saved": "Podešavanja su sačuvana",
+        "request_status_sending": "Slanje u {count} modela...",
+        "request_status_received": "Primljeno {count} odgovora",
+        "request_status_error": "Greška: {error}",
+        "improve_status_running": "✨ AI unapređuje vaš upit...",
+        "improve_status_done": "✨ Upit je unaprijeđen!",
+        "improve_error_message": "Nije moguće unaprijediti upit:\n{error}",
+        "improve_error_generic": "Greška pri unapređenju upita:\n{error}",
+        "language_ru": "Русский",
+        "language_me": "Crnogorski (latinica)",
+    },
+}
+
+
+class I18n:
+    """Простой переводчик для интерфейса."""
+
+    def __init__(self, db):
+        self.db = db
+        self.language = db.get_setting("language", "ru")
+
+    def set_language(self, language: str) -> None:
+        self.language = language
+        self.db.set_setting("language", language)
+
+    def t(self, key: str, **kwargs) -> str:
+        lang_table = TRANSLATIONS.get(self.language, TRANSLATIONS["ru"])
+        template = lang_table.get(key, key)
+        return template.format(**kwargs)
+
 
 class MarkdownViewerDialog(QDialog):
     """Диалог для просмотра ответа в формате Markdown."""
 
-    def __init__(self, title: str, content: str, parent=None):
+    def __init__(self, title: str, content: str, i18n: I18n, parent=None):
         super().__init__(parent)
-        self.setWindowTitle(f"Ответ: {title}")
+        self.i18n = i18n
+        self.setWindowTitle(self.i18n.t("dialog_response_title", title=title))
         self.setMinimumSize(800, 600)
         self.setup_ui(content)
 
@@ -63,7 +416,7 @@ class MarkdownViewerDialog(QDialog):
         # Кнопки
         buttons_layout = QHBoxLayout()
 
-        copy_btn = QPushButton("📋 Копировать")
+        copy_btn = QPushButton(self.i18n.t("dialog_copy"))
         copy_btn.clicked.connect(lambda: self.copy_to_clipboard(content))
         copy_btn.setStyleSheet("""
             QPushButton {
@@ -81,7 +434,7 @@ class MarkdownViewerDialog(QDialog):
 
         buttons_layout.addStretch()
 
-        close_btn = QPushButton("Закрыть")
+        close_btn = QPushButton(self.i18n.t("dialog_close"))
         close_btn.clicked.connect(self.close)
         close_btn.setStyleSheet("""
             QPushButton {
@@ -103,7 +456,11 @@ class MarkdownViewerDialog(QDialog):
         """Копировать содержимое в буфер обмена."""
         clipboard = QApplication.clipboard()
         clipboard.setText(content)
-        QMessageBox.information(self, "Готово", "Текст скопирован в буфер обмена")
+        QMessageBox.information(
+            self,
+            self.i18n.t("done_title"),
+            self.i18n.t("dialog_copied"),
+        )
 
 
 class PromptImproverDialog(QDialog):
@@ -111,10 +468,11 @@ class PromptImproverDialog(QDialog):
 
     prompt_selected = pyqtSignal(str)  # Сигнал с выбранным промптом
 
-    def __init__(self, result: 'ImprovedPrompt', parent=None):
+    def __init__(self, result: 'ImprovedPrompt', i18n: I18n, parent=None):
         super().__init__(parent)
         self.result = result
-        self.setWindowTitle("✨ Улучшение промпта")
+        self.i18n = i18n
+        self.setWindowTitle(self.i18n.t("prompt_improver_title"))
         self.setMinimumSize(900, 700)
         self.setup_ui()
 
@@ -123,7 +481,7 @@ class PromptImproverDialog(QDialog):
         layout.setSpacing(15)
 
         # Оригинальный промпт
-        orig_label = QLabel("📝 Оригинальный промпт:")
+        orig_label = QLabel(self.i18n.t("prompt_original_label"))
         orig_label.setStyleSheet("font-weight: bold; font-size: 14px; color: #7f8c8d;")
         layout.addWidget(orig_label)
 
@@ -143,7 +501,7 @@ class PromptImproverDialog(QDialog):
         layout.addWidget(self.orig_text)
 
         # Улучшенный промпт
-        improved_label = QLabel("✨ Улучшенный промпт:")
+        improved_label = QLabel(self.i18n.t("prompt_improved_label"))
         improved_label.setStyleSheet("font-weight: bold; font-size: 14px; color: #27ae60;")
         layout.addWidget(improved_label)
 
@@ -170,7 +528,7 @@ class PromptImproverDialog(QDialog):
         """)
         improved_layout.addWidget(self.improved_text)
 
-        use_improved_btn = QPushButton("✅ Использовать этот вариант")
+        use_improved_btn = QPushButton(self.i18n.t("prompt_use_improved"))
         use_improved_btn.clicked.connect(lambda: self.select_prompt(self.result.improved))
         use_improved_btn.setStyleSheet("""
             QPushButton {
@@ -189,7 +547,7 @@ class PromptImproverDialog(QDialog):
 
         # Альтернативы
         if self.result.alternatives:
-            alt_label = QLabel("🔄 Альтернативные варианты:")
+            alt_label = QLabel(self.i18n.t("prompt_alt_label"))
             alt_label.setStyleSheet("font-weight: bold; font-size: 14px; color: #3498db;")
             layout.addWidget(alt_label)
 
@@ -204,7 +562,7 @@ class PromptImproverDialog(QDialog):
                 """)
                 alt_layout = QVBoxLayout(alt_frame)
 
-                alt_title = QLabel(f"Альтернатива {i + 1}")
+                alt_title = QLabel(self.i18n.t("prompt_alt_title", index=i + 1))
                 alt_title.setStyleSheet("font-weight: bold; color: #2980b9;")
                 alt_layout.addWidget(alt_title)
 
@@ -220,7 +578,9 @@ class PromptImproverDialog(QDialog):
                 """)
                 alt_layout.addWidget(alt_text)
 
-                use_alt_btn = QPushButton(f"Использовать альтернативу {i + 1}")
+                use_alt_btn = QPushButton(
+                    self.i18n.t("prompt_use_alt", index=i + 1)
+                )
                 use_alt_btn.clicked.connect(lambda checked, text=alt: self.select_prompt(text))
                 use_alt_btn.setStyleSheet("""
                     QPushButton {
@@ -237,7 +597,7 @@ class PromptImproverDialog(QDialog):
                 layout.addWidget(alt_frame)
 
         # Кнопка закрытия
-        close_btn = QPushButton("Закрыть")
+        close_btn = QPushButton(self.i18n.t("prompt_close"))
         close_btn.clicked.connect(self.reject)
         close_btn.setStyleSheet("""
             QPushButton {
@@ -318,10 +678,11 @@ class RequestTab(QWidget):
     request_sent = pyqtSignal(str, list)  # prompt, models
     improve_requested = pyqtSignal(str)  # prompt для улучшения
 
-    def __init__(self, db: Database, model_manager: ModelManager, parent=None):
+    def __init__(self, db: Database, model_manager: ModelManager, i18n: I18n, parent=None):
         super().__init__(parent)
         self.db = db
         self.model_manager = model_manager
+        self.i18n = i18n
         self.setup_ui()
 
     def setup_ui(self):
@@ -330,13 +691,13 @@ class RequestTab(QWidget):
 
         # Заголовок и CRUD кнопки
         header_layout = QHBoxLayout()
-        title = QLabel("Введите промпт")
-        title.setStyleSheet("font-size: 18px; font-weight: bold;")
-        header_layout.addWidget(title)
+        self.title_label = QLabel()
+        self.title_label.setStyleSheet("font-size: 18px; font-weight: bold;")
+        header_layout.addWidget(self.title_label)
         header_layout.addStretch()
 
         # CRUD кнопки для промптов
-        self.view_prompt_btn = QPushButton("📖 Просмотр")
+        self.view_prompt_btn = QPushButton()
         self.view_prompt_btn.clicked.connect(self.view_prompt)
         self.view_prompt_btn.setStyleSheet("""
             QPushButton {
@@ -350,7 +711,7 @@ class RequestTab(QWidget):
         """)
         header_layout.addWidget(self.view_prompt_btn)
 
-        self.edit_prompt_btn = QPushButton("✏️ Изменить")
+        self.edit_prompt_btn = QPushButton()
         self.edit_prompt_btn.clicked.connect(self.edit_prompt)
         self.edit_prompt_btn.setStyleSheet("""
             QPushButton {
@@ -364,7 +725,7 @@ class RequestTab(QWidget):
         """)
         header_layout.addWidget(self.edit_prompt_btn)
 
-        self.delete_prompt_btn = QPushButton("🗑️ Удалить")
+        self.delete_prompt_btn = QPushButton()
         self.delete_prompt_btn.clicked.connect(self.delete_prompt)
         self.delete_prompt_btn.setStyleSheet("""
             QPushButton {
@@ -382,38 +743,38 @@ class RequestTab(QWidget):
 
         # Выбор сохранённого промпта
         saved_layout = QHBoxLayout()
-        saved_label = QLabel("Сохранённые промпты:")
+        self.saved_label = QLabel()
         self.prompts_combo = QComboBox()
         self.prompts_combo.setMinimumWidth(300)
         self.prompts_combo.currentIndexChanged.connect(self.on_prompt_selected)
         self.refresh_prompts_btn = QPushButton("⟳")
         self.refresh_prompts_btn.setFixedWidth(30)
         self.refresh_prompts_btn.clicked.connect(self.load_saved_prompts)
-        saved_layout.addWidget(saved_label)
+        saved_layout.addWidget(self.saved_label)
         saved_layout.addWidget(self.prompts_combo, 1)
         saved_layout.addWidget(self.refresh_prompts_btn)
         layout.addLayout(saved_layout)
 
         # Текстовое поле для промпта
         self.prompt_edit = QTextEdit()
-        self.prompt_edit.setPlaceholderText("Введите ваш запрос здесь...")
+        self.prompt_edit.setPlaceholderText("")
         self.prompt_edit.setMinimumHeight(150)
         # Стиль берётся из темы
         layout.addWidget(self.prompt_edit)
 
         # Теги
         tags_layout = QHBoxLayout()
-        tags_label = QLabel("Теги:")
+        self.tags_label = QLabel()
         self.tags_edit = QLineEdit()
-        self.tags_edit.setPlaceholderText("теги через запятую")
-        tags_layout.addWidget(tags_label)
+        self.tags_edit.setPlaceholderText("")
+        tags_layout.addWidget(self.tags_label)
         tags_layout.addWidget(self.tags_edit, 1)
         layout.addLayout(tags_layout)
 
         # Кнопки
         buttons_layout = QHBoxLayout()
 
-        self.save_prompt_btn = QPushButton("💾 Сохранить промпт")
+        self.save_prompt_btn = QPushButton()
         self.save_prompt_btn.clicked.connect(self.save_prompt)
         self.save_prompt_btn.setStyleSheet("""
             QPushButton {
@@ -433,8 +794,8 @@ class RequestTab(QWidget):
         buttons_layout.addStretch()
 
         # Кнопка улучшения промпта
-        self.improve_btn = QPushButton("✨ Улучшить")
-        self.improve_btn.setToolTip("AI-ассистент улучшит ваш промпт")
+        self.improve_btn = QPushButton()
+        self.improve_btn.setToolTip("")
         self.improve_btn.clicked.connect(self.improve_prompt)
         self.improve_btn.setStyleSheet("""
             QPushButton {
@@ -455,7 +816,7 @@ class RequestTab(QWidget):
         """)
         buttons_layout.addWidget(self.improve_btn)
 
-        self.send_btn = QPushButton("🚀 Отправить")
+        self.send_btn = QPushButton()
         self.send_btn.clicked.connect(self.send_request)
         self.send_btn.setStyleSheet("""
             QPushButton {
@@ -492,12 +853,28 @@ class RequestTab(QWidget):
         layout.addStretch()
 
         # Загрузка сохранённых промптов
+        self.apply_translations()
         self.load_saved_prompts()
+
+    def apply_translations(self):
+        """Применить переводы для вкладки."""
+        self.title_label.setText(self.i18n.t("request_title"))
+        self.view_prompt_btn.setText(self.i18n.t("prompt_view_btn"))
+        self.edit_prompt_btn.setText(self.i18n.t("prompt_edit_btn"))
+        self.delete_prompt_btn.setText(self.i18n.t("prompt_delete_btn"))
+        self.saved_label.setText(self.i18n.t("request_saved_prompts"))
+        self.prompt_edit.setPlaceholderText(self.i18n.t("request_prompt_placeholder"))
+        self.tags_label.setText(self.i18n.t("request_tags_label"))
+        self.tags_edit.setPlaceholderText(self.i18n.t("request_tags_placeholder"))
+        self.save_prompt_btn.setText(self.i18n.t("request_save_btn"))
+        self.improve_btn.setText(self.i18n.t("request_improve_btn"))
+        self.improve_btn.setToolTip(self.i18n.t("request_improve_tooltip"))
+        self.send_btn.setText(self.i18n.t("request_send_btn"))
 
     def load_saved_prompts(self):
         """Загрузить список сохранённых промптов."""
         self.prompts_combo.clear()
-        self.prompts_combo.addItem("— Выберите промпт —", None)
+        self.prompts_combo.addItem(self.i18n.t("request_select_prompt_placeholder"), None)
         prompts = self.db.get_prompts(limit=50)
         for prompt in prompts:
             text = prompt["text"][:50] + "..." if len(prompt["text"]) > 50 else prompt["text"]
@@ -516,30 +893,35 @@ class RequestTab(QWidget):
         """Сохранить промпт в базу данных."""
         text = self.prompt_edit.toPlainText().strip()
         if not text:
-            QMessageBox.warning(self, "Ошибка", "Введите текст промпта")
+            QMessageBox.warning(self, self.i18n.t("error_title"), self.i18n.t("request_error_enter_prompt"))
             return
 
         tags = self.tags_edit.text().strip()
         self.db.add_prompt(text, tags)
         self.load_saved_prompts()
-        self.status_label.setText("Промпт сохранён")
+        self.status_label.setText(self.i18n.t("request_status_saved"))
 
     def view_prompt(self):
         """Просмотр выбранного промпта."""
         prompt_id = self.prompts_combo.currentData()
         if not prompt_id:
-            QMessageBox.warning(self, "Ошибка", "Выберите промпт")
+            QMessageBox.warning(self, self.i18n.t("error_title"), self.i18n.t("request_error_select_prompt"))
             return
         prompt = self.db.get_prompt_by_id(prompt_id)
         if prompt:
-            dialog = MarkdownViewerDialog("Промпт", prompt["text"], self)
+            dialog = MarkdownViewerDialog(
+                self.i18n.t("prompt_dialog_title"),
+                prompt["text"],
+                self.i18n,
+                self,
+            )
             dialog.exec_()
 
     def edit_prompt(self):
         """Редактировать выбранный промпт."""
         prompt_id = self.prompts_combo.currentData()
         if not prompt_id:
-            QMessageBox.warning(self, "Ошибка", "Выберите промпт")
+            QMessageBox.warning(self, self.i18n.t("error_title"), self.i18n.t("request_error_select_prompt"))
             return
         prompt = self.db.get_prompt_by_id(prompt_id)
         if prompt:
@@ -547,16 +929,18 @@ class RequestTab(QWidget):
             self.prompt_edit.setText(prompt["text"])
             self.tags_edit.setText(prompt["tags"])
             # Удалить старый и сохранить как новый при нажатии "Сохранить"
-            self.status_label.setText("Редактирование промпта. Измените и нажмите 'Сохранить'")
+            self.status_label.setText(self.i18n.t("request_status_editing"))
 
     def delete_prompt(self):
         """Удалить выбранный промпт."""
         prompt_id = self.prompts_combo.currentData()
         if not prompt_id:
-            QMessageBox.warning(self, "Ошибка", "Выберите промпт")
+            QMessageBox.warning(self, self.i18n.t("error_title"), self.i18n.t("request_error_select_prompt"))
             return
         reply = QMessageBox.question(
-            self, "Подтверждение", "Удалить выбранный промпт?",
+            self,
+            self.i18n.t("confirm_title"),
+            self.i18n.t("confirm_delete_prompt"),
             QMessageBox.Yes | QMessageBox.No
         )
         if reply == QMessageBox.Yes:
@@ -564,19 +948,21 @@ class RequestTab(QWidget):
             self.load_saved_prompts()
             self.prompt_edit.clear()
             self.tags_edit.clear()
-            self.status_label.setText("Промпт удалён")
+            self.status_label.setText(self.i18n.t("request_status_deleted"))
 
     def send_request(self):
         """Отправить запрос во все активные модели."""
         prompt = self.prompt_edit.toPlainText().strip()
         if not prompt:
-            QMessageBox.warning(self, "Ошибка", "Введите текст промпта")
+            QMessageBox.warning(self, self.i18n.t("error_title"), self.i18n.t("request_error_enter_prompt"))
             return
 
         models = self.model_manager.get_active_models()
         if not models:
             QMessageBox.warning(
-                self, "Ошибка", "Нет активных моделей. Добавьте модели на вкладке «Модели»."
+                self,
+                self.i18n.t("error_title"),
+                self.i18n.t("request_error_no_models"),
             )
             return
 
@@ -586,7 +972,11 @@ class RequestTab(QWidget):
         """Запросить улучшение промпта через AI."""
         prompt = self.prompt_edit.toPlainText().strip()
         if not prompt:
-            QMessageBox.warning(self, "Ошибка", "Введите текст промпта для улучшения")
+            QMessageBox.warning(
+                self,
+                self.i18n.t("error_title"),
+                self.i18n.t("request_error_enter_prompt_improve"),
+            )
             return
 
         self.improve_requested.emit(prompt)
@@ -594,16 +984,17 @@ class RequestTab(QWidget):
     def set_prompt_text(self, text: str):
         """Установить текст промпта (используется для подстановки улучшенного)."""
         self.prompt_edit.setPlainText(text)
-        self.status_label.setText("Промпт обновлён")
+        self.status_label.setText(self.i18n.t("request_status_updated"))
 
 
 class ResultsTab(QWidget):
     """Вкладка «Результаты»."""
 
-    def __init__(self, db: Database, results_store: ResultsStore, parent=None):
+    def __init__(self, db: Database, results_store: ResultsStore, i18n: I18n, parent=None):
         super().__init__(parent)
         self.db = db
         self.results_store = results_store
+        self.i18n = i18n
         self.setup_ui()
 
     def setup_ui(self):
@@ -612,13 +1003,13 @@ class ResultsTab(QWidget):
 
         # Заголовок и CRUD кнопки
         header_layout = QHBoxLayout()
-        title = QLabel("Результаты запроса")
-        title.setStyleSheet("font-size: 18px; font-weight: bold;")
-        header_layout.addWidget(title)
+        self.title_label = QLabel()
+        self.title_label.setStyleSheet("font-size: 18px; font-weight: bold;")
+        header_layout.addWidget(self.title_label)
         header_layout.addStretch()
 
         # CRUD кнопки
-        self.view_result_btn = QPushButton("📖 Просмотр")
+        self.view_result_btn = QPushButton()
         self.view_result_btn.clicked.connect(self.view_selected_result)
         self.view_result_btn.setStyleSheet("""
             QPushButton {
@@ -632,7 +1023,7 @@ class ResultsTab(QWidget):
         """)
         header_layout.addWidget(self.view_result_btn)
 
-        self.delete_result_btn = QPushButton("🗑️ Удалить")
+        self.delete_result_btn = QPushButton()
         self.delete_result_btn.clicked.connect(self.delete_selected_result)
         self.delete_result_btn.setStyleSheet("""
             QPushButton {
@@ -650,11 +1041,11 @@ class ResultsTab(QWidget):
 
         # Кнопки выбора
         select_layout = QHBoxLayout()
-        self.select_all_btn = QPushButton("☑ Выбрать все")
+        self.select_all_btn = QPushButton()
         self.select_all_btn.clicked.connect(self.select_all)
         select_layout.addWidget(self.select_all_btn)
 
-        self.deselect_all_btn = QPushButton("☐ Снять все")
+        self.deselect_all_btn = QPushButton()
         self.deselect_all_btn.clicked.connect(self.deselect_all)
         select_layout.addWidget(self.deselect_all_btn)
         
@@ -670,7 +1061,7 @@ class ResultsTab(QWidget):
         # Таблица результатов
         self.results_table = QTableWidget()
         self.results_table.setColumnCount(4)
-        self.results_table.setHorizontalHeaderLabels(["", "Модель", "Ответ", "Токены"])
+        self.results_table.setHorizontalHeaderLabels(["", "", "", ""])
         self.results_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Fixed)
         self.results_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
         self.results_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
@@ -688,7 +1079,7 @@ class ResultsTab(QWidget):
         # Кнопки
         buttons_layout = QHBoxLayout()
 
-        self.save_btn = QPushButton("💾 Сохранить выбранные")
+        self.save_btn = QPushButton()
         self.save_btn.clicked.connect(self.save_selected)
         self.save_btn.setStyleSheet("""
             QPushButton {
@@ -707,7 +1098,7 @@ class ResultsTab(QWidget):
 
         buttons_layout.addStretch()
 
-        self.clear_btn = QPushButton("🗑 Очистить")
+        self.clear_btn = QPushButton()
         self.clear_btn.clicked.connect(self.clear_results)
         self.clear_btn.setStyleSheet("""
             QPushButton {
@@ -726,6 +1117,26 @@ class ResultsTab(QWidget):
 
         layout.addLayout(buttons_layout)
 
+        self.apply_translations()
+
+    def apply_translations(self):
+        """Применить переводы для вкладки."""
+        self.title_label.setText(self.i18n.t("results_title"))
+        self.view_result_btn.setText(self.i18n.t("results_view_btn"))
+        self.delete_result_btn.setText(self.i18n.t("results_delete_btn"))
+        self.select_all_btn.setText(self.i18n.t("results_select_all"))
+        self.deselect_all_btn.setText(self.i18n.t("results_deselect_all"))
+        self.results_table.setHorizontalHeaderLabels(
+            [
+                self.i18n.t("results_table_select"),
+                self.i18n.t("results_table_model"),
+                self.i18n.t("results_table_response"),
+                self.i18n.t("results_table_tokens"),
+            ]
+        )
+        self.save_btn.setText(self.i18n.t("results_save_btn"))
+        self.clear_btn.setText(self.i18n.t("results_clear_btn"))
+
     def update_results(self):
         """Обновить таблицу результатов."""
         self.results_table.setRowCount(0)
@@ -733,7 +1144,9 @@ class ResultsTab(QWidget):
         prompt = self.results_store.current_prompt
         if prompt:
             display_prompt = prompt[:200] + "..." if len(prompt) > 200 else prompt
-            self.prompt_label.setText(f"Промпт: {display_prompt}")
+            self.prompt_label.setText(
+                self.i18n.t("results_prompt_prefix", prompt=display_prompt)
+            )
         else:
             self.prompt_label.setText("")
 
@@ -784,7 +1197,11 @@ class ResultsTab(QWidget):
         """Сохранить выбранные результаты."""
         selected = self.results_store.get_selected()
         if not selected:
-            QMessageBox.warning(self, "Ошибка", "Не выбрано ни одного результата")
+            QMessageBox.warning(
+                self,
+                self.i18n.t("error_title"),
+                self.i18n.t("results_error_no_selection"),
+            )
             return
 
         results_to_save = [
@@ -801,7 +1218,9 @@ class ResultsTab(QWidget):
         self.db.save_results(results_to_save)
         log_save_results(len(results_to_save))
         QMessageBox.information(
-            self, "Успех", f"Сохранено {len(results_to_save)} результатов"
+            self,
+            self.i18n.t("success_title"),
+            self.i18n.t("results_save_success", count=len(results_to_save)),
         )
 
     def clear_results(self):
@@ -820,21 +1239,31 @@ class ResultsTab(QWidget):
         """Просмотр выбранного результата."""
         row = self.get_selected_row()
         if row < 0 or row >= len(self.results_store.results):
-            QMessageBox.warning(self, "Ошибка", "Выберите результат")
+            QMessageBox.warning(
+                self,
+                self.i18n.t("error_title"),
+                self.i18n.t("results_error_select_result"),
+            )
             return
         result = self.results_store.results[row]
-        dialog = MarkdownViewerDialog(result.model_name, result.response, self)
+        dialog = MarkdownViewerDialog(result.model_name, result.response, self.i18n, self)
         dialog.exec_()
 
     def delete_selected_result(self):
         """Удалить выбранный результат из временного хранилища."""
         row = self.get_selected_row()
         if row < 0 or row >= len(self.results_store.results):
-            QMessageBox.warning(self, "Ошибка", "Выберите результат")
+            QMessageBox.warning(
+                self,
+                self.i18n.t("error_title"),
+                self.i18n.t("results_error_select_result"),
+            )
             return
         reply = QMessageBox.question(
-            self, "Подтверждение", "Удалить выбранный результат?",
-            QMessageBox.Yes | QMessageBox.No
+            self,
+            self.i18n.t("confirm_title"),
+            self.i18n.t("confirm_delete_result"),
+            QMessageBox.Yes | QMessageBox.No,
         )
         if reply == QMessageBox.Yes:
             del self.results_store._results[row]
@@ -844,9 +1273,10 @@ class ResultsTab(QWidget):
 class ModelsTab(QWidget):
     """Вкладка «Модели»."""
 
-    def __init__(self, model_manager: ModelManager, parent=None):
+    def __init__(self, model_manager: ModelManager, i18n: I18n, parent=None):
         super().__init__(parent)
         self.model_manager = model_manager
+        self.i18n = i18n
         self.setup_ui()
         self.load_models()
 
@@ -856,12 +1286,12 @@ class ModelsTab(QWidget):
 
         # Заголовок и CRUD кнопки
         header_layout = QHBoxLayout()
-        title = QLabel("Управление моделями")
-        title.setStyleSheet("font-size: 18px; font-weight: bold;")
-        header_layout.addWidget(title)
+        self.title_label = QLabel()
+        self.title_label.setStyleSheet("font-size: 18px; font-weight: bold;")
+        header_layout.addWidget(self.title_label)
         header_layout.addStretch()
 
-        self.view_model_btn = QPushButton("📖 Просмотр")
+        self.view_model_btn = QPushButton()
         self.view_model_btn.clicked.connect(self.view_model)
         self.view_model_btn.setStyleSheet("""
             QPushButton {
@@ -875,7 +1305,7 @@ class ModelsTab(QWidget):
         """)
         header_layout.addWidget(self.view_model_btn)
 
-        self.edit_model_btn = QPushButton("✏️ Изменить")
+        self.edit_model_btn = QPushButton()
         self.edit_model_btn.clicked.connect(self.edit_model)
         self.edit_model_btn.setStyleSheet("""
             QPushButton {
@@ -889,7 +1319,7 @@ class ModelsTab(QWidget):
         """)
         header_layout.addWidget(self.edit_model_btn)
 
-        self.delete_model_btn = QPushButton("🗑️ Удалить")
+        self.delete_model_btn = QPushButton()
         self.delete_model_btn.clicked.connect(self.delete_selected_model)
         self.delete_model_btn.setStyleSheet("""
             QPushButton {
@@ -908,9 +1338,7 @@ class ModelsTab(QWidget):
         # Таблица моделей
         self.models_table = QTableWidget()
         self.models_table.setColumnCount(6)
-        self.models_table.setHorizontalHeaderLabels(
-            ["Активна", "Название", "Провайдер", "URL", "API-ключ", "Model ID"]
-        )
+        self.models_table.setHorizontalHeaderLabels(["", "", "", "", "", ""])
         self.models_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Fixed)
         self.models_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
         self.models_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
@@ -931,13 +1359,13 @@ class ModelsTab(QWidget):
         # Стили берутся из темы
         form_layout = QVBoxLayout(form_frame)
 
-        form_title = QLabel("Добавить модель")
+        self.form_title = QLabel()
         # Стиль берётся из темы
-        form_layout.addWidget(form_title)
+        form_layout.addWidget(self.form_title)
 
         row1 = QHBoxLayout()
         self.name_edit = QLineEdit()
-        self.name_edit.setPlaceholderText("Название")
+        self.name_edit.setPlaceholderText("")
         row1.addWidget(self.name_edit)
 
         self.provider_combo = QComboBox()
@@ -947,23 +1375,23 @@ class ModelsTab(QWidget):
 
         row2 = QHBoxLayout()
         self.url_edit = QLineEdit()
-        self.url_edit.setPlaceholderText("API URL")
+        self.url_edit.setPlaceholderText("")
         row2.addWidget(self.url_edit)
         form_layout.addLayout(row2)
 
         row3 = QHBoxLayout()
         self.api_key_edit = QLineEdit()
-        self.api_key_edit.setPlaceholderText("Имя переменной окружения (напр. OPENAI_API_KEY)")
+        self.api_key_edit.setPlaceholderText("")
         row3.addWidget(self.api_key_edit)
 
         self.model_id_edit = QLineEdit()
-        self.model_id_edit.setPlaceholderText("Model ID")
+        self.model_id_edit.setPlaceholderText("")
         row3.addWidget(self.model_id_edit)
         form_layout.addLayout(row3)
 
-        add_btn = QPushButton("➕ Добавить")
-        add_btn.clicked.connect(self.add_model)
-        add_btn.setStyleSheet("""
+        self.add_btn = QPushButton()
+        self.add_btn.clicked.connect(self.add_model)
+        self.add_btn.setStyleSheet("""
             QPushButton {
                 background-color: #27ae60;
                 color: white;
@@ -975,14 +1403,14 @@ class ModelsTab(QWidget):
                 background-color: #219a52;
             }
         """)
-        form_layout.addWidget(add_btn)
+        form_layout.addWidget(self.add_btn)
 
         layout.addWidget(form_frame)
 
         # Кнопка добавления моделей по умолчанию
-        default_btn = QPushButton("📋 Добавить модели по умолчанию")
-        default_btn.clicked.connect(self.add_default_models)
-        default_btn.setStyleSheet("""
+        self.default_btn = QPushButton()
+        self.default_btn.clicked.connect(self.add_default_models)
+        self.default_btn.setStyleSheet("""
             QPushButton {
                 background-color: #3498db;
                 color: white;
@@ -994,7 +1422,33 @@ class ModelsTab(QWidget):
                 background-color: #2980b9;
             }
         """)
-        layout.addWidget(default_btn)
+        layout.addWidget(self.default_btn)
+
+        self.apply_translations()
+
+    def apply_translations(self):
+        """Применить переводы для вкладки."""
+        self.title_label.setText(self.i18n.t("models_title"))
+        self.view_model_btn.setText(self.i18n.t("models_view_btn"))
+        self.edit_model_btn.setText(self.i18n.t("models_edit_btn"))
+        self.delete_model_btn.setText(self.i18n.t("models_delete_btn"))
+        self.models_table.setHorizontalHeaderLabels(
+            [
+                self.i18n.t("models_table_active"),
+                self.i18n.t("models_table_name"),
+                self.i18n.t("models_table_provider"),
+                self.i18n.t("models_table_url"),
+                self.i18n.t("models_table_api_key"),
+                self.i18n.t("models_table_model_id"),
+            ]
+        )
+        self.form_title.setText(self.i18n.t("models_form_title"))
+        self.name_edit.setPlaceholderText(self.i18n.t("models_name_placeholder"))
+        self.url_edit.setPlaceholderText(self.i18n.t("models_url_placeholder"))
+        self.api_key_edit.setPlaceholderText(self.i18n.t("models_api_key_placeholder"))
+        self.model_id_edit.setPlaceholderText(self.i18n.t("models_model_id_placeholder"))
+        self.add_btn.setText(self.i18n.t("models_add_btn"))
+        self.default_btn.setText(self.i18n.t("models_default_btn"))
 
     def load_models(self):
         """Загрузить список моделей."""
@@ -1029,7 +1483,11 @@ class ModelsTab(QWidget):
         model_id = self.model_id_edit.text().strip()
 
         if not all([name, url, api_key_env, model_id]):
-            QMessageBox.warning(self, "Ошибка", "Заполните все поля")
+            QMessageBox.warning(
+                self,
+                self.i18n.t("error_title"),
+                self.i18n.t("models_error_fill_fields"),
+            )
             return
 
         self.model_manager.add_model(
@@ -1056,8 +1514,8 @@ class ModelsTab(QWidget):
         """Удалить модель."""
         reply = QMessageBox.question(
             self,
-            "Подтверждение",
-            "Удалить модель?",
+            self.i18n.t("confirm_title"),
+            self.i18n.t("models_confirm_delete"),
             QMessageBox.Yes | QMessageBox.No,
         )
         if reply == QMessageBox.Yes:
@@ -1078,28 +1536,33 @@ class ModelsTab(QWidget):
         """Просмотр выбранной модели."""
         model = self.get_selected_model()
         if not model:
-            QMessageBox.warning(self, "Ошибка", "Выберите модель")
+            QMessageBox.warning(
+                self,
+                self.i18n.t("error_title"),
+                self.i18n.t("models_error_select_model"),
+            )
             return
-        info = f"""**Название:** {model['name']}
-
-**Провайдер:** {model['provider']}
-
-**API URL:** {model['api_url']}
-
-**API ключ:** {model['api_key_env']}
-
-**Model ID:** {model['model_id']}
-
-**Активна:** {'Да' if model['is_active'] else 'Нет'}
-"""
-        dialog = MarkdownViewerDialog(model['name'], info, self)
+        info = (
+            f"**{self.i18n.t('models_info_name')}:** {model['name']}\n\n"
+            f"**{self.i18n.t('models_info_provider')}:** {model['provider']}\n\n"
+            f"**{self.i18n.t('models_info_api_url')}:** {model['api_url']}\n\n"
+            f"**{self.i18n.t('models_info_api_key')}:** {model['api_key_env']}\n\n"
+            f"**{self.i18n.t('models_info_model_id')}:** {model['model_id']}\n\n"
+            f"**{self.i18n.t('models_info_active')}:** "
+            f"{self.i18n.t('models_info_active_yes') if model['is_active'] else self.i18n.t('models_info_active_no')}\n"
+        )
+        dialog = MarkdownViewerDialog(model['name'], info, self.i18n, self)
         dialog.exec_()
 
     def edit_model(self):
         """Редактировать выбранную модель."""
         model = self.get_selected_model()
         if not model:
-            QMessageBox.warning(self, "Ошибка", "Выберите модель")
+            QMessageBox.warning(
+                self,
+                self.i18n.t("error_title"),
+                self.i18n.t("models_error_select_model"),
+            )
             return
         # Заполнить форму
         self.name_edit.setText(model['name'])
@@ -1110,13 +1573,21 @@ class ModelsTab(QWidget):
         # Удалить старую модель
         self.model_manager.delete_model(model['id'])
         self.load_models()
-        QMessageBox.information(self, "Редактирование", "Измените данные и нажмите 'Добавить'")
+        QMessageBox.information(
+            self,
+            self.i18n.t("models_info_edit_title"),
+            self.i18n.t("models_info_edit_body"),
+        )
 
     def delete_selected_model(self):
         """Удалить выбранную модель."""
         model = self.get_selected_model()
         if not model:
-            QMessageBox.warning(self, "Ошибка", "Выберите модель")
+            QMessageBox.warning(
+                self,
+                self.i18n.t("error_title"),
+                self.i18n.t("models_error_select_model"),
+            )
             return
         self.delete_model(model['id'])
 
@@ -1124,16 +1595,25 @@ class ModelsTab(QWidget):
         """Добавить модели по умолчанию."""
         self.model_manager.add_default_models()
         self.load_models()
-        QMessageBox.information(self, "Готово", "Модели по умолчанию добавлены")
+        QMessageBox.information(
+            self,
+            self.i18n.t("models_default_added_title"),
+            self.i18n.t("models_default_added_body"),
+        )
 
 
 class EditResultDialog(QDialog):
     """Диалог для редактирования результата."""
 
-    def __init__(self, result: dict = None, parent=None):
+    def __init__(self, result: dict = None, i18n: I18n = None, parent=None):
         super().__init__(parent)
         self.result = result or {}
-        self.setWindowTitle("Редактирование записи" if result else "Новая запись")
+        self.i18n = i18n
+        self.setWindowTitle(
+            self.i18n.t("edit_result_title_edit")
+            if result
+            else self.i18n.t("edit_result_title_new")
+        )
         self.setMinimumSize(600, 400)
         self.setup_ui()
 
@@ -1142,21 +1622,21 @@ class EditResultDialog(QDialog):
 
         # Модель
         model_layout = QHBoxLayout()
-        model_layout.addWidget(QLabel("Модель:"))
+        model_layout.addWidget(QLabel(self.i18n.t("edit_result_model_label")))
         self.model_edit = QLineEdit()
         self.model_edit.setText(self.result.get("model_name", ""))
         model_layout.addWidget(self.model_edit)
         layout.addLayout(model_layout)
 
         # Промпт
-        layout.addWidget(QLabel("Промпт:"))
+        layout.addWidget(QLabel(self.i18n.t("edit_result_prompt_label")))
         self.prompt_edit = QTextEdit()
         self.prompt_edit.setText(self.result.get("prompt_text", ""))
         self.prompt_edit.setMaximumHeight(100)
         layout.addWidget(self.prompt_edit)
 
         # Ответ
-        layout.addWidget(QLabel("Ответ:"))
+        layout.addWidget(QLabel(self.i18n.t("edit_result_response_label")))
         self.response_edit = QTextEdit()
         self.response_edit.setText(self.result.get("response", ""))
         layout.addWidget(self.response_edit)
@@ -1165,11 +1645,11 @@ class EditResultDialog(QDialog):
         buttons_layout = QHBoxLayout()
         buttons_layout.addStretch()
 
-        cancel_btn = QPushButton("Отмена")
+        cancel_btn = QPushButton(self.i18n.t("edit_result_cancel_btn"))
         cancel_btn.clicked.connect(self.reject)
         buttons_layout.addWidget(cancel_btn)
 
-        save_btn = QPushButton("💾 Сохранить")
+        save_btn = QPushButton(self.i18n.t("edit_result_save_btn"))
         save_btn.clicked.connect(self.accept)
         save_btn.setStyleSheet("""
             QPushButton {
@@ -1195,9 +1675,10 @@ class EditResultDialog(QDialog):
 class HistoryTab(QWidget):
     """Вкладка «История» с пагинацией и CRUD."""
 
-    def __init__(self, db: Database, parent=None):
+    def __init__(self, db: Database, i18n: I18n, parent=None):
         super().__init__(parent)
         self.db = db
+        self.i18n = i18n
         self.current_page = 1
         self.page_size = 20
         self.total_rows = 0
@@ -1210,14 +1691,14 @@ class HistoryTab(QWidget):
 
         # Заголовок и поиск
         header_layout = QHBoxLayout()
-        title = QLabel("История результатов")
-        title.setStyleSheet("font-size: 18px; font-weight: bold;")
-        header_layout.addWidget(title)
+        self.title_label = QLabel()
+        self.title_label.setStyleSheet("font-size: 18px; font-weight: bold;")
+        header_layout.addWidget(self.title_label)
 
         header_layout.addStretch()
 
         self.search_edit = QLineEdit()
-        self.search_edit.setPlaceholderText("🔍 Поиск...")
+        self.search_edit.setPlaceholderText("")
         self.search_edit.setMaximumWidth(300)
         self.search_edit.returnPressed.connect(self.search_and_reset)
         header_layout.addWidget(self.search_edit)
@@ -1232,7 +1713,7 @@ class HistoryTab(QWidget):
         # CRUD кнопки
         crud_layout = QHBoxLayout()
 
-        self.view_btn = QPushButton("📖 Просмотр")
+        self.view_btn = QPushButton()
         self.view_btn.clicked.connect(self.view_result)
         self.view_btn.setStyleSheet("""
             QPushButton {
@@ -1246,7 +1727,7 @@ class HistoryTab(QWidget):
         """)
         crud_layout.addWidget(self.view_btn)
 
-        self.edit_btn = QPushButton("✏️ Изменить")
+        self.edit_btn = QPushButton()
         self.edit_btn.clicked.connect(self.edit_result)
         self.edit_btn.setStyleSheet("""
             QPushButton {
@@ -1260,7 +1741,7 @@ class HistoryTab(QWidget):
         """)
         crud_layout.addWidget(self.edit_btn)
 
-        self.delete_btn = QPushButton("🗑️ Удалить")
+        self.delete_btn = QPushButton()
         self.delete_btn.clicked.connect(self.delete_selected)
         self.delete_btn.setStyleSheet("""
             QPushButton {
@@ -1276,22 +1757,20 @@ class HistoryTab(QWidget):
 
         crud_layout.addStretch()
 
-        export_md_btn = QPushButton("📄 Markdown")
-        export_md_btn.clicked.connect(self.export_markdown)
-        crud_layout.addWidget(export_md_btn)
+        self.export_md_btn = QPushButton()
+        self.export_md_btn.clicked.connect(self.export_markdown)
+        crud_layout.addWidget(self.export_md_btn)
 
-        export_json_btn = QPushButton("📋 JSON")
-        export_json_btn.clicked.connect(self.export_json)
-        crud_layout.addWidget(export_json_btn)
+        self.export_json_btn = QPushButton()
+        self.export_json_btn.clicked.connect(self.export_json)
+        crud_layout.addWidget(self.export_json_btn)
 
         layout.addLayout(crud_layout)
 
         # Таблица истории
         self.history_table = QTableWidget()
         self.history_table.setColumnCount(4)
-        self.history_table.setHorizontalHeaderLabels(
-            ["Дата", "Модель", "Промпт", "Ответ"]
-        )
+        self.history_table.setHorizontalHeaderLabels(["", "", "", ""])
         self.history_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self.history_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
         self.history_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
@@ -1315,7 +1794,7 @@ class HistoryTab(QWidget):
         self.prev_btn.clicked.connect(self.go_prev)
         pagination_layout.addWidget(self.prev_btn)
 
-        self.page_label = QLabel("Страница 1 из 1")
+        self.page_label = QLabel("")
         self.page_label.setAlignment(Qt.AlignCenter)
         self.page_label.setMinimumWidth(150)
         pagination_layout.addWidget(self.page_label)
@@ -1332,17 +1811,39 @@ class HistoryTab(QWidget):
 
         pagination_layout.addStretch()
 
-        pagination_layout.addWidget(QLabel("На странице:"))
+        self.page_size_label = QLabel()
+        pagination_layout.addWidget(self.page_size_label)
         self.page_size_combo = QComboBox()
         self.page_size_combo.addItems(["10", "20", "50", "100"])
         self.page_size_combo.setCurrentText("20")
         self.page_size_combo.currentTextChanged.connect(self.change_page_size)
         pagination_layout.addWidget(self.page_size_combo)
 
-        self.total_label = QLabel("Всего: 0")
+        self.total_label = QLabel("")
         pagination_layout.addWidget(self.total_label)
 
         layout.addLayout(pagination_layout)
+
+        self.apply_translations()
+
+    def apply_translations(self):
+        """Применить переводы для вкладки."""
+        self.title_label.setText(self.i18n.t("history_title"))
+        self.search_edit.setPlaceholderText(self.i18n.t("history_search_placeholder"))
+        self.view_btn.setText(self.i18n.t("history_view_btn"))
+        self.edit_btn.setText(self.i18n.t("history_edit_btn"))
+        self.delete_btn.setText(self.i18n.t("history_delete_btn"))
+        self.export_md_btn.setText(self.i18n.t("history_export_md"))
+        self.export_json_btn.setText(self.i18n.t("history_export_json"))
+        self.history_table.setHorizontalHeaderLabels(
+            [
+                self.i18n.t("history_table_date"),
+                self.i18n.t("history_table_model"),
+                self.i18n.t("history_table_prompt"),
+                self.i18n.t("history_table_response"),
+            ]
+        )
+        self.page_size_label.setText(self.i18n.t("history_per_page_label"))
 
     def search_and_reset(self):
         """Сброс на первую страницу при поиске."""
@@ -1395,8 +1896,12 @@ class HistoryTab(QWidget):
         self.history_table.resizeRowsToContents()
 
         # Обновить метки пагинации
-        self.page_label.setText(f"Страница {self.current_page} из {total_pages}")
-        self.total_label.setText(f"Всего: {self.total_rows}")
+        self.page_label.setText(
+            self.i18n.t("history_page_label", current=self.current_page, total=total_pages)
+        )
+        self.total_label.setText(
+            self.i18n.t("history_total_label", total=self.total_rows)
+        )
 
         # Состояние кнопок
         self.first_btn.setEnabled(self.current_page > 1)
@@ -1442,19 +1947,27 @@ class HistoryTab(QWidget):
         """Просмотр результата в Markdown."""
         result = self.get_selected_result()
         if not result:
-            QMessageBox.warning(self, "Ошибка", "Выберите запись")
+            QMessageBox.warning(
+                self,
+                self.i18n.t("error_title"),
+                self.i18n.t("history_error_select_record"),
+            )
             return
-        dialog = MarkdownViewerDialog(result["model_name"], result["response"], self)
+        dialog = MarkdownViewerDialog(result["model_name"], result["response"], self.i18n, self)
         dialog.exec_()
 
     def edit_result(self):
         """Редактировать результат."""
         result = self.get_selected_result()
         if not result:
-            QMessageBox.warning(self, "Ошибка", "Выберите запись")
+            QMessageBox.warning(
+                self,
+                self.i18n.t("error_title"),
+                self.i18n.t("history_error_select_record"),
+            )
             return
 
-        dialog = EditResultDialog(result, self)
+        dialog = EditResultDialog(result, self.i18n, self)
         if dialog.exec_() == QDialog.Accepted:
             values = dialog.get_values()
             # Обновить в базе данных
@@ -1469,18 +1982,28 @@ class HistoryTab(QWidget):
             )
             self.db.connection.commit()
             self.load_history()
-            QMessageBox.information(self, "Успех", "Запись обновлена")
+            QMessageBox.information(
+                self,
+                self.i18n.t("success_title"),
+                self.i18n.t("history_edit_success"),
+            )
 
     def delete_selected(self):
         """Удалить выбранный результат."""
         result = self.get_selected_result()
         if not result:
-            QMessageBox.warning(self, "Ошибка", "Выберите запись")
+            QMessageBox.warning(
+                self,
+                self.i18n.t("error_title"),
+                self.i18n.t("history_error_select_record"),
+            )
             return
 
         reply = QMessageBox.question(
-            self, "Подтверждение", "Удалить выбранную запись?",
-            QMessageBox.Yes | QMessageBox.No
+            self,
+            self.i18n.t("confirm_title"),
+            self.i18n.t("history_confirm_delete"),
+            QMessageBox.Yes | QMessageBox.No,
         )
         if reply == QMessageBox.Yes:
             self.db.delete_result(result["id"])
@@ -1492,24 +2015,35 @@ class HistoryTab(QWidget):
         results = self.db.get_results(search=search, limit=1000)
 
         if not results:
-            QMessageBox.warning(self, "Ошибка", "Нет данных для экспорта")
+            QMessageBox.warning(
+                self,
+                self.i18n.t("error_title"),
+                self.i18n.t("history_export_no_data"),
+            )
             return
 
         file_path, _ = QFileDialog.getSaveFileName(
-            self, "Сохранить как", "export.md", "Markdown (*.md)"
+            self,
+            self.i18n.t("history_export_title"),
+            "export.md",
+            self.i18n.t("history_export_markdown_filter"),
         )
         if not file_path:
             return
 
         with open(file_path, "w", encoding="utf-8") as f:
-            f.write("# История ChatList\n\n")
+            f.write(f"{self.i18n.t('history_export_header')}\n\n")
             for r in results:
                 f.write(f"## {r['model_name']} — {r['created_at']}\n\n")
-                f.write(f"**Промпт:** {r['prompt_text']}\n\n")
-                f.write(f"**Ответ:**\n\n{r['response']}\n\n---\n\n")
+                f.write(f"{self.i18n.t('history_export_prompt_label')} {r['prompt_text']}\n\n")
+                f.write(f"{self.i18n.t('history_export_response_label')}\n\n{r['response']}\n\n---\n\n")
 
         log_export(file_path, "Markdown")
-        QMessageBox.information(self, "Успех", f"Экспортировано в {file_path}")
+        QMessageBox.information(
+            self,
+            self.i18n.t("success_title"),
+            self.i18n.t("history_export_success", path=file_path),
+        )
 
     def export_json(self):
         """Экспорт в JSON."""
@@ -1519,11 +2053,18 @@ class HistoryTab(QWidget):
         results = self.db.get_results(search=search, limit=1000)
 
         if not results:
-            QMessageBox.warning(self, "Ошибка", "Нет данных для экспорта")
+            QMessageBox.warning(
+                self,
+                self.i18n.t("error_title"),
+                self.i18n.t("history_export_no_data"),
+            )
             return
 
         file_path, _ = QFileDialog.getSaveFileName(
-            self, "Сохранить как", "export.json", "JSON (*.json)"
+            self,
+            self.i18n.t("history_export_title"),
+            "export.json",
+            self.i18n.t("history_export_json_filter"),
         )
         if not file_path:
             return
@@ -1532,15 +2073,20 @@ class HistoryTab(QWidget):
             json.dump(results, f, ensure_ascii=False, indent=2)
 
         log_export(file_path, "JSON")
-        QMessageBox.information(self, "Успех", f"Экспортировано в {file_path}")
+        QMessageBox.information(
+            self,
+            self.i18n.t("success_title"),
+            self.i18n.t("history_export_success", path=file_path),
+        )
 
 
 class AboutDialog(QDialog):
     """Диалог «О программе»."""
 
-    def __init__(self, parent=None):
+    def __init__(self, i18n: I18n, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("О программе")
+        self.i18n = i18n
+        self.setWindowTitle(self.i18n.t("about_title"))
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setFixedSize(520, 450)
         self.setup_ui()
@@ -1577,7 +2123,7 @@ class AboutDialog(QDialog):
         app_name.setStyleSheet("font-size: 24px; font-weight: bold; color: #2c3e50;")
         title_layout.addWidget(app_name)
         
-        version = QLabel(f"Версия {__version__}")
+        version = QLabel(self.i18n.t("about_version", version=__version__))
         version.setStyleSheet("font-size: 14px; color: #7f8c8d;")
         title_layout.addWidget(version)
         header_layout.addLayout(title_layout)
@@ -1586,13 +2132,7 @@ class AboutDialog(QDialog):
         layout.addLayout(header_layout)
 
         # Описание
-        description = QLabel(
-            "Приложение для сравнения ответов нейросетей.\n\n"
-            "Отправляйте один промпт в несколько AI-моделей\n"
-            "и сравнивайте их ответы в удобной таблице.\n\n"
-            "Поддерживаются: OpenAI, Anthropic, Google,\n"
-            "OpenRouter и другие OpenAI-совместимые API."
-        )
+        description = QLabel(self.i18n.t("about_description"))
         description.setStyleSheet("font-size: 13px; color: #34495e; line-height: 1.5;")
         description.setWordWrap(True)
         layout.addWidget(description)
@@ -1604,7 +2144,7 @@ class AboutDialog(QDialog):
         layout.addWidget(separator)
 
         # Автор и ссылки
-        author = QLabel("© 2025-2026 ChatList")
+        author = QLabel(self.i18n.t("about_author"))
         author.setStyleSheet("font-size: 12px; color: #95a5a6;")
         layout.addWidget(author)
 
@@ -1616,7 +2156,7 @@ class AboutDialog(QDialog):
         layout.addStretch()
 
         # Кнопка закрыть
-        close_btn = QPushButton("Закрыть")
+        close_btn = QPushButton(self.i18n.t("about_close_btn"))
         close_btn.clicked.connect(self.accept)
         close_btn.setStyleSheet("""
             QPushButton {
@@ -1639,10 +2179,12 @@ class SettingsTab(QWidget):
 
     # Сигнал об изменении настроек оформления
     appearance_changed = pyqtSignal()
+    language_changed = pyqtSignal()
 
-    def __init__(self, db: Database, parent=None):
+    def __init__(self, db: Database, i18n: I18n, parent=None):
         super().__init__(parent)
         self.db = db
+        self.i18n = i18n
         self.setup_ui()
         self.load_settings()
 
@@ -1651,36 +2193,43 @@ class SettingsTab(QWidget):
         layout.setSpacing(15)
 
         # Заголовок
-        title = QLabel("Настройки")
-        title.setStyleSheet("font-size: 18px; font-weight: bold;")
-        layout.addWidget(title)
+        self.title_label = QLabel()
+        self.title_label.setStyleSheet("font-size: 18px; font-weight: bold;")
+        layout.addWidget(self.title_label)
 
         # === Оформление ===
-        appearance_title = QLabel("🎨 Оформление")
-        appearance_title.setStyleSheet("font-size: 16px; font-weight: bold; color: #9b59b6;")
-        layout.addWidget(appearance_title)
+        self.appearance_title = QLabel()
+        self.appearance_title.setStyleSheet("font-size: 16px; font-weight: bold; color: #9b59b6;")
+        layout.addWidget(self.appearance_title)
+
+        # Язык
+        language_layout = QHBoxLayout()
+        self.language_label = QLabel()
+        self.language_combo = QComboBox()
+        self.language_combo.setMinimumWidth(200)
+        language_layout.addWidget(self.language_label)
+        language_layout.addWidget(self.language_combo)
+        language_layout.addStretch()
+        layout.addLayout(language_layout)
 
         # Тема
         theme_layout = QHBoxLayout()
-        theme_label = QLabel("Тема:")
+        self.theme_label = QLabel()
         self.theme_combo = QComboBox()
-        self.theme_combo.addItem("☀️ Светлая", "light")
-        self.theme_combo.addItem("🌙 Тёмная", "dark")
         self.theme_combo.setMinimumWidth(200)
-        theme_layout.addWidget(theme_label)
+        theme_layout.addWidget(self.theme_label)
         theme_layout.addWidget(self.theme_combo)
         theme_layout.addStretch()
         layout.addLayout(theme_layout)
 
         # Размер шрифта
         font_layout = QHBoxLayout()
-        font_label = QLabel("Размер шрифта:")
+        self.font_label = QLabel()
         self.font_spin = QSpinBox()
         self.font_spin.setRange(8, 24)
         self.font_spin.setValue(10)
-        self.font_spin.setSuffix(" пт")
         self.font_spin.setMinimumWidth(100)
-        font_layout.addWidget(font_label)
+        font_layout.addWidget(self.font_label)
         font_layout.addWidget(self.font_spin)
         font_layout.addStretch()
         layout.addLayout(font_layout)
@@ -1692,31 +2241,30 @@ class SettingsTab(QWidget):
         layout.addWidget(separator1)
 
         # === Запросы ===
-        requests_title = QLabel("🌐 Запросы к API")
-        requests_title.setStyleSheet("font-size: 16px; font-weight: bold; color: #3498db;")
-        layout.addWidget(requests_title)
+        self.requests_title = QLabel()
+        self.requests_title.setStyleSheet("font-size: 16px; font-weight: bold; color: #3498db;")
+        layout.addWidget(self.requests_title)
 
         # Таймаут
         timeout_layout = QHBoxLayout()
-        timeout_label = QLabel("Таймаут запроса:")
+        self.timeout_label = QLabel()
         self.timeout_spin = QSpinBox()
         self.timeout_spin.setRange(10, 300)
         self.timeout_spin.setValue(60)
-        self.timeout_spin.setSuffix(" сек")
         self.timeout_spin.setMinimumWidth(100)
-        timeout_layout.addWidget(timeout_label)
+        timeout_layout.addWidget(self.timeout_label)
         timeout_layout.addWidget(self.timeout_spin)
         timeout_layout.addStretch()
         layout.addLayout(timeout_layout)
 
         # Максимум токенов
         tokens_layout = QHBoxLayout()
-        tokens_label = QLabel("Максимум токенов:")
+        self.tokens_label = QLabel()
         self.tokens_spin = QSpinBox()
         self.tokens_spin.setRange(100, 16000)
         self.tokens_spin.setValue(4096)
         self.tokens_spin.setMinimumWidth(100)
-        tokens_layout.addWidget(tokens_label)
+        tokens_layout.addWidget(self.tokens_label)
         tokens_layout.addWidget(self.tokens_spin)
         tokens_layout.addStretch()
         layout.addLayout(tokens_layout)
@@ -1728,13 +2276,13 @@ class SettingsTab(QWidget):
         layout.addWidget(separator2)
 
         # === AI-ассистент ===
-        ai_title = QLabel("✨ AI-ассистент для улучшения промптов")
-        ai_title.setStyleSheet("font-size: 16px; font-weight: bold; color: #27ae60;")
-        layout.addWidget(ai_title)
+        self.ai_title = QLabel()
+        self.ai_title.setStyleSheet("font-size: 16px; font-weight: bold; color: #27ae60;")
+        layout.addWidget(self.ai_title)
 
         # Выбор модели для улучшения
         model_layout = QHBoxLayout()
-        model_label = QLabel("Модель для улучшения:")
+        self.improve_model_label = QLabel()
         self.improve_model_combo = QComboBox()
         self.improve_model_combo.setMinimumWidth(350)
         
@@ -1742,15 +2290,15 @@ class SettingsTab(QWidget):
         for name, model_id in PromptImprover.RECOMMENDED_MODELS:
             self.improve_model_combo.addItem(name, model_id)
         
-        model_layout.addWidget(model_label)
+        model_layout.addWidget(self.improve_model_label)
         model_layout.addWidget(self.improve_model_combo)
         model_layout.addStretch()
         layout.addLayout(model_layout)
 
         # Подсказка
-        hint_label = QLabel("💡 Модель используется для анализа и улучшения ваших промптов")
-        hint_label.setStyleSheet("font-style: italic;")
-        layout.addWidget(hint_label)
+        self.hint_label = QLabel()
+        self.hint_label.setStyleSheet("font-style: italic;")
+        layout.addWidget(self.hint_label)
 
         # Разделитель
         separator3 = QFrame()
@@ -1762,9 +2310,9 @@ class SettingsTab(QWidget):
         buttons_layout = QHBoxLayout()
 
         # Кнопка сохранения
-        save_btn = QPushButton("💾 Сохранить настройки")
-        save_btn.clicked.connect(self.save_settings)
-        save_btn.setStyleSheet("""
+        self.save_btn = QPushButton()
+        self.save_btn.clicked.connect(self.save_settings)
+        self.save_btn.setStyleSheet("""
             QPushButton {
                 background-color: #27ae60;
                 color: white;
@@ -1776,14 +2324,14 @@ class SettingsTab(QWidget):
                 background-color: #219a52;
             }
         """)
-        buttons_layout.addWidget(save_btn)
+        buttons_layout.addWidget(self.save_btn)
 
         buttons_layout.addStretch()
 
         # Кнопка "О программе"
-        about_btn = QPushButton("ℹ️ О программе")
-        about_btn.clicked.connect(self.show_about)
-        about_btn.setStyleSheet("""
+        self.about_btn = QPushButton()
+        self.about_btn.clicked.connect(self.show_about)
+        self.about_btn.setStyleSheet("""
             QPushButton {
                 background-color: #3498db;
                 color: white;
@@ -1795,21 +2343,24 @@ class SettingsTab(QWidget):
                 background-color: #2980b9;
             }
         """)
-        buttons_layout.addWidget(about_btn)
+        buttons_layout.addWidget(self.about_btn)
 
         layout.addLayout(buttons_layout)
         layout.addStretch()
+
+        self.apply_translations()
 
     def load_settings(self):
         """Загрузить настройки."""
         timeout = self.db.get_setting("request_timeout", "60")
         max_tokens = self.db.get_setting("max_tokens", "4096")
         improve_model = self.db.get_setting(
-            "improve_model", 
-            PromptImprover.RECOMMENDED_MODELS[0][1]
+            "improve_model",
+            PromptImprover.RECOMMENDED_MODELS[0][1],
         )
         theme = self.db.get_setting("theme", "light")
         font_size = self.db.get_setting("font_size", "10")
+        language = self.db.get_setting("language", "ru")
 
         self.timeout_spin.setValue(int(timeout))
         self.tokens_spin.setValue(int(max_tokens))
@@ -1819,6 +2370,11 @@ class SettingsTab(QWidget):
         theme_index = self.theme_combo.findData(theme)
         if theme_index >= 0:
             self.theme_combo.setCurrentIndex(theme_index)
+
+        # Установить язык
+        lang_index = self.language_combo.findData(language)
+        if lang_index >= 0:
+            self.language_combo.setCurrentIndex(lang_index)
         
         # Установить выбранную модель
         index = self.improve_model_combo.findData(improve_model)
@@ -1832,16 +2388,65 @@ class SettingsTab(QWidget):
         self.db.set_setting("improve_model", self.improve_model_combo.currentData())
         self.db.set_setting("theme", self.theme_combo.currentData())
         self.db.set_setting("font_size", str(self.font_spin.value()))
+
+        selected_language = self.language_combo.currentData()
+        if selected_language:
+            self.i18n.set_language(selected_language)
+            self.language_changed.emit()
         
         # Сигнал для применения оформления
         self.appearance_changed.emit()
         
-        QMessageBox.information(self, "Успех", "Настройки сохранены")
+        QMessageBox.information(
+            self,
+            self.i18n.t("success_title"),
+            self.i18n.t("settings_saved"),
+        )
 
     def show_about(self):
         """Показать окно О программе."""
-        dialog = AboutDialog(self)
+        dialog = AboutDialog(self.i18n, self)
         dialog.exec_()
+
+    def apply_translations(self):
+        """Применить переводы для вкладки."""
+        self.title_label.setText(self.i18n.t("settings_title"))
+        self.appearance_title.setText(self.i18n.t("settings_appearance_title"))
+        self.language_label.setText(self.i18n.t("settings_language_label"))
+        self._refresh_language_combo()
+        self.theme_label.setText(self.i18n.t("settings_theme_label"))
+        self._refresh_theme_combo()
+        self.font_label.setText(self.i18n.t("settings_font_label"))
+        self.font_spin.setSuffix(self.i18n.t("settings_font_suffix"))
+        self.requests_title.setText(self.i18n.t("settings_requests_title"))
+        self.timeout_label.setText(self.i18n.t("settings_timeout_label"))
+        self.timeout_spin.setSuffix(self.i18n.t("settings_timeout_suffix"))
+        self.tokens_label.setText(self.i18n.t("settings_tokens_label"))
+        self.ai_title.setText(self.i18n.t("settings_ai_title"))
+        self.improve_model_label.setText(self.i18n.t("settings_improve_model_label"))
+        self.hint_label.setText(self.i18n.t("settings_hint"))
+        self.save_btn.setText(self.i18n.t("settings_save_btn"))
+        self.about_btn.setText(self.i18n.t("settings_about_btn"))
+
+    def _refresh_language_combo(self):
+        current = self.language_combo.currentData()
+        self.language_combo.clear()
+        self.language_combo.addItem(self.i18n.t("language_ru"), "ru")
+        self.language_combo.addItem(self.i18n.t("language_me"), "me-latn")
+        if current:
+            index = self.language_combo.findData(current)
+            if index >= 0:
+                self.language_combo.setCurrentIndex(index)
+
+    def _refresh_theme_combo(self):
+        current = self.theme_combo.currentData()
+        self.theme_combo.clear()
+        self.theme_combo.addItem(self.i18n.t("settings_theme_light"), "light")
+        self.theme_combo.addItem(self.i18n.t("settings_theme_dark"), "dark")
+        if current:
+            index = self.theme_combo.findData(current)
+            if index >= 0:
+                self.theme_combo.setCurrentIndex(index)
 
 
 class MainWindow(QMainWindow):
@@ -2016,7 +2621,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("ChatList — Сравнение нейросетей")
+        self.setWindowTitle("")
         self.setMinimumSize(1000, 700)
         
         # Установка иконки окна
@@ -2027,6 +2632,7 @@ class MainWindow(QMainWindow):
 
         # Инициализация компонентов
         self.db = Database()
+        self.i18n = I18n(self.db)
         self.model_manager = ModelManager(self.db)
         self.results_store = ResultsStore()
         self.prompt_improver = PromptImprover(self.db)
@@ -2036,8 +2642,9 @@ class MainWindow(QMainWindow):
         self.setup_ui()
         self.setup_connections()
         
-        # Применить сохранённые настройки оформления
+        # Применить сохранённые настройки оформления и языка
         self.apply_appearance()
+        self.apply_language()
 
     def setup_ui(self):
         """Настройка интерфейса."""
@@ -2051,17 +2658,17 @@ class MainWindow(QMainWindow):
         # Стили вкладок задаются через тему (LIGHT_THEME / DARK_THEME)
 
         # Создание вкладок
-        self.request_tab = RequestTab(self.db, self.model_manager)
-        self.results_tab = ResultsTab(self.db, self.results_store)
-        self.models_tab = ModelsTab(self.model_manager)
-        self.history_tab = HistoryTab(self.db)
-        self.settings_tab = SettingsTab(self.db)
+        self.request_tab = RequestTab(self.db, self.model_manager, self.i18n)
+        self.results_tab = ResultsTab(self.db, self.results_store, self.i18n)
+        self.models_tab = ModelsTab(self.model_manager, self.i18n)
+        self.history_tab = HistoryTab(self.db, self.i18n)
+        self.settings_tab = SettingsTab(self.db, self.i18n)
 
-        self.tabs.addTab(self.request_tab, "📝 Запрос")
-        self.tabs.addTab(self.results_tab, "📊 Результаты")
-        self.tabs.addTab(self.models_tab, "🤖 Модели")
-        self.tabs.addTab(self.history_tab, "📚 История")
-        self.tabs.addTab(self.settings_tab, "⚙️ Настройки")
+        self.tabs.addTab(self.request_tab, "")
+        self.tabs.addTab(self.results_tab, "")
+        self.tabs.addTab(self.models_tab, "")
+        self.tabs.addTab(self.history_tab, "")
+        self.tabs.addTab(self.settings_tab, "")
 
         # Переключение вкладок
         self.tabs.currentChanged.connect(self.on_tab_changed)
@@ -2073,6 +2680,7 @@ class MainWindow(QMainWindow):
         self.request_tab.request_sent.connect(self.send_requests)
         self.request_tab.improve_requested.connect(self.improve_prompt)
         self.settings_tab.appearance_changed.connect(self.apply_appearance)
+        self.settings_tab.language_changed.connect(self.apply_language)
 
     def apply_appearance(self):
         """Применить настройки оформления (тема и размер шрифта)."""
@@ -2093,6 +2701,24 @@ class MainWindow(QMainWindow):
             font.setPointSize(font_size)
             app.setFont(font)
 
+    def apply_language(self):
+        """Применить настройки языка интерфейса."""
+        self.setWindowTitle(self.i18n.t("app_title"))
+        self.tabs.setTabText(0, self.i18n.t("tab_request"))
+        self.tabs.setTabText(1, self.i18n.t("tab_results"))
+        self.tabs.setTabText(2, self.i18n.t("tab_models"))
+        self.tabs.setTabText(3, self.i18n.t("tab_history"))
+        self.tabs.setTabText(4, self.i18n.t("tab_settings"))
+
+        self.request_tab.apply_translations()
+        self.request_tab.load_saved_prompts()
+        self.results_tab.apply_translations()
+        self.results_tab.update_results()
+        self.models_tab.apply_translations()
+        self.history_tab.apply_translations()
+        self.history_tab.load_history()
+        self.settings_tab.apply_translations()
+
     def on_tab_changed(self, index: int):
         """Обработка переключения вкладок."""
         # Обновление данных при переключении на вкладку История
@@ -2108,7 +2734,9 @@ class MainWindow(QMainWindow):
         self.request_tab.progress.setVisible(True)
         self.request_tab.progress.setRange(0, 0)  # Indeterminate
         self.request_tab.send_btn.setEnabled(False)
-        self.request_tab.status_label.setText(f"Отправка в {len(models)} моделей...")
+        self.request_tab.status_label.setText(
+            self.i18n.t("request_status_sending", count=len(models))
+        )
 
         # Получить таймаут из настроек
         timeout = int(self.db.get_setting("request_timeout", "60"))
@@ -2123,7 +2751,9 @@ class MainWindow(QMainWindow):
         """Обработка завершения запросов."""
         self.request_tab.progress.setVisible(False)
         self.request_tab.send_btn.setEnabled(True)
-        self.request_tab.status_label.setText(f"Получено {len(results)} ответов")
+        self.request_tab.status_label.setText(
+            self.i18n.t("request_status_received", count=len(results))
+        )
 
         # Логирование результатов
         for r in results:
@@ -2146,8 +2776,10 @@ class MainWindow(QMainWindow):
         log_error("Ошибка при отправке запросов", Exception(error))
         self.request_tab.progress.setVisible(False)
         self.request_tab.send_btn.setEnabled(True)
-        self.request_tab.status_label.setText(f"Ошибка: {error}")
-        QMessageBox.critical(self, "Ошибка", error)
+        self.request_tab.status_label.setText(
+            self.i18n.t("request_status_error", error=error)
+        )
+        QMessageBox.critical(self, self.i18n.t("error_title"), error)
 
     def improve_prompt(self, prompt: str):
         """Улучшить промпт через AI-ассистент."""
@@ -2156,7 +2788,7 @@ class MainWindow(QMainWindow):
         self.request_tab.progress.setRange(0, 0)
         self.request_tab.improve_btn.setEnabled(False)
         self.request_tab.send_btn.setEnabled(False)
-        self.request_tab.status_label.setText("✨ AI улучшает ваш промпт...")
+        self.request_tab.status_label.setText(self.i18n.t("improve_status_running"))
 
         # Получить таймаут
         timeout = int(self.db.get_setting("request_timeout", "90"))
@@ -2174,14 +2806,20 @@ class MainWindow(QMainWindow):
         self.request_tab.send_btn.setEnabled(True)
 
         if not result.success:
-            self.request_tab.status_label.setText(f"Ошибка: {result.error}")
-            QMessageBox.warning(self, "Ошибка", f"Не удалось улучшить промпт:\n{result.error}")
+            self.request_tab.status_label.setText(
+                self.i18n.t("request_status_error", error=result.error)
+            )
+            QMessageBox.warning(
+                self,
+                self.i18n.t("error_title"),
+                self.i18n.t("improve_error_message", error=result.error),
+            )
             return
 
-        self.request_tab.status_label.setText("✨ Промпт улучшен!")
+        self.request_tab.status_label.setText(self.i18n.t("improve_status_done"))
 
         # Открыть диалог выбора
-        dialog = PromptImproverDialog(result, self)
+        dialog = PromptImproverDialog(result, self.i18n, self)
         dialog.prompt_selected.connect(self.request_tab.set_prompt_text)
         dialog.exec_()
 
@@ -2190,8 +2828,14 @@ class MainWindow(QMainWindow):
         self.request_tab.progress.setVisible(False)
         self.request_tab.improve_btn.setEnabled(True)
         self.request_tab.send_btn.setEnabled(True)
-        self.request_tab.status_label.setText(f"Ошибка: {error}")
-        QMessageBox.critical(self, "Ошибка", f"Ошибка при улучшении промпта:\n{error}")
+        self.request_tab.status_label.setText(
+            self.i18n.t("request_status_error", error=error)
+        )
+        QMessageBox.critical(
+            self,
+            self.i18n.t("error_title"),
+            self.i18n.t("improve_error_generic", error=error),
+        )
 
     def closeEvent(self, event):
         """Обработка закрытия окна."""

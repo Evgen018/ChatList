@@ -5,12 +5,12 @@
 ### 1️⃣ Скачать и установить
 
 **Вариант А: Инсталлятор (рекомендуется)**
-1. Скачайте `ChatList-v1.0.0-Setup.exe` с [GitHub Releases](https://github.com/Evgen018/ChatList/releases/latest)
+1. Скачайте `ChatList-v1.0.4-Setup.exe` с [GitHub Releases](https://github.com/Evgen018/ChatList/releases/latest)
 2. Запустите установщик
 3. Следуйте инструкциям на экране
 
 **Вариант Б: Portable версия**
-1. Скачайте `ChatList-v1.0.0.exe` с [GitHub Releases](https://github.com/Evgen018/ChatList/releases/latest)
+1. Скачайте `ChatList-v1.0.4.exe` с [GitHub Releases](https://github.com/Evgen018/ChatList/releases/latest)
 2. Создайте папку для приложения
 3. Запустите файл напрямую
 

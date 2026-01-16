@@ -2,7 +2,7 @@
 # Usage: .\create_archives.ps1
 
 param(
-    [string]$Version = "1.0.0"
+    [string]$Version = "1.0.4"
 )
 
 $ErrorActionPreference = "Stop"
